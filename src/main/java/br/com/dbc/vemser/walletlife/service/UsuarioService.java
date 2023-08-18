@@ -148,4 +148,8 @@ public class UsuarioService {
                 .map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    public Optional<UsuarioEntity> findByLogin(String login) {
+        return usuarioRepository.findByLogin(login);
+    }
+
 }
