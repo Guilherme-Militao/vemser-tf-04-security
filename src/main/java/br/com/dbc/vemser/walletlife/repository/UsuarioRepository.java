@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Repository
@@ -43,4 +44,6 @@ public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Integer>
 
     @Query("Select u From Usuario u where (:idUsuario is null or u.idUsuario = :idUsuario)")
     Page<UsuarioEntity> findAllComOptional(@Param("idUsuario") Integer idUsuario, Pageable pageable);
+
+    Optional<UsuarioEntity> findByLogin(String login);
 }
