@@ -1,4 +1,4 @@
-package br.com.dbc.vemser.walletlife.modelos;
+package br.com.dbc.vemser.walletlife.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -10,7 +10,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "RECEITA")
-public class Receita{
+public class ReceitaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "RECEITA_SEQ")
@@ -33,5 +33,5 @@ public class Receita{
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
-    private Usuario usuario;
+    private UsuarioEntity usuarioEntity;
 }

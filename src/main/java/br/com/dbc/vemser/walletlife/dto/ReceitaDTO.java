@@ -1,6 +1,6 @@
 package br.com.dbc.vemser.walletlife.dto;
 
-import br.com.dbc.vemser.walletlife.modelos.Receita;
+import br.com.dbc.vemser.walletlife.entity.ReceitaEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +12,7 @@ import org.springframework.beans.BeanUtils;
 public class ReceitaDTO extends ReceitaCreateDTO{
     private Integer id;
 
-    public ReceitaDTO(Receita entity){
+    public ReceitaDTO(ReceitaEntity entity){
         BeanUtils.copyProperties(entity, this);
     }
 }

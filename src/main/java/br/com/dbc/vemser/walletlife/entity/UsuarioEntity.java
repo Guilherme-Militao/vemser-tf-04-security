@@ -1,4 +1,4 @@
-package br.com.dbc.vemser.walletlife.modelos;
+package br.com.dbc.vemser.walletlife.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -13,7 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "Usuario")
-public class Usuario {
+public class UsuarioEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "USUARIO_SEQUENCE")
@@ -37,15 +37,15 @@ public class Usuario {
     private String senha;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Receita> receitas = new HashSet<>();
+    @OneToMany(mappedBy = "usuarioEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ReceitaEntity> receitaEntities = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Despesa> despesas = new HashSet<>();
+    @OneToMany(mappedBy = "usuarioEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<DespesaEntity> despesaEntities = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Investimento> investimentos = new HashSet<>();
+    @OneToMany(mappedBy = "usuarioEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<InvestimentoEntity> investimentoEntities = new HashSet<>();
 
 }

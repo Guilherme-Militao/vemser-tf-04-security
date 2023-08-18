@@ -1,6 +1,6 @@
 package br.com.dbc.vemser.walletlife.dto;
 
-import br.com.dbc.vemser.walletlife.modelos.Investimento;
+import br.com.dbc.vemser.walletlife.entity.InvestimentoEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,7 +14,7 @@ import org.springframework.beans.BeanUtils;
 public class InvestimentoDTO extends InvestimentoCreateDTO {
     private Integer idInvestimento;
 
-    public InvestimentoDTO(Investimento entity){
+    public InvestimentoDTO(InvestimentoEntity entity){
         BeanUtils.copyProperties(entity, this);
     }
 }

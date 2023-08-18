@@ -1,6 +1,6 @@
 package br.com.dbc.vemser.walletlife.dto;
 
-import br.com.dbc.vemser.walletlife.modelos.Usuario;
+import br.com.dbc.vemser.walletlife.entity.UsuarioEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,16 +8,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -63,17 +60,17 @@ public class UsuarioDadosDTO {
     @Schema(description = "Lista de investimentos", required = false, example = "[]")
     private List<InvestimentoDTO> investimentos = new ArrayList<>();
 
-    public UsuarioDadosDTO(Usuario entity){
+    public UsuarioDadosDTO(UsuarioEntity entity){
         BeanUtils.copyProperties(entity, this);
-        this.receitas = entity.getReceitas().stream().map(
+        this.receitas = entity.getReceitaEntities().stream().map(
                 receita -> new ReceitaDTO(receita)
         ).collect(Collectors.toList());
 
-        this.despesas = entity.getDespesas().stream().map(
+        this.despesas = entity.getDespesaEntities().stream().map(
                 despesa -> new DespesaDTO(despesa)
         ).collect(Collectors.toList());
 
-        this.investimentos = entity.getInvestimentos().stream().map(
+        this.investimentos = entity.getInvestimentoEntities().stream().map(
                 investimento -> new InvestimentoDTO(investimento)
         ).collect(Collectors.toList());
     }

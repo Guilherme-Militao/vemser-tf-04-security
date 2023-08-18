@@ -1,12 +1,11 @@
-package br.com.dbc.vemser.walletlife.modelos;
+package br.com.dbc.vemser.walletlife.entity;
 
-import br.com.dbc.vemser.walletlife.enumerators.TipoDespesaEReceita;
+import br.com.dbc.vemser.walletlife.enums.TipoDespesaEReceita;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -16,7 +15,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "DESPESA")
-public class Despesa {
+public class DespesaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "DESPESA_SEQUENCE")
@@ -47,6 +46,6 @@ public class Despesa {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
-    private Usuario usuario;
+    private UsuarioEntity usuarioEntity;
 
 }
