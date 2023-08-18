@@ -1,7 +1,6 @@
 package br.com.dbc.vemser.walletlife.security;
 
-import br.com.dbc.vemser.pessoaapi.entity.UsuarioEntity;
-import br.com.dbc.vemser.pessoaapi.service.UsuarioService;
+import br.com.dbc.vemser.walletlife.entity.UsuarioEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -10,9 +9,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
-
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +25,6 @@ public class TokenService {
     @Value("${jwt.secret}")
     private String secret;
 
-    private final UsuarioService usuarioService;
 
     public String generateToken(UsuarioEntity usuarioEntity) {
         Date now = new Date();
