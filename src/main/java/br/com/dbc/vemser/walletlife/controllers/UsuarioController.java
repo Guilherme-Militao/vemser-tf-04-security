@@ -35,7 +35,7 @@ public class UsuarioController implements UsuarioControllerDoc {
     @GetMapping("/{idUsuario}")
     public ResponseEntity<UsuarioDTO> findById(@PathVariable("idUsuario") @Positive Integer idUsuario) {
         log.info("Usuário: listar por Id do usuário");
-        return new ResponseEntity<>(usuarioService.findById(idUsuario), HttpStatus.OK);
+        return new ResponseEntity<>(usuarioService.findByUsuarioEntity(idUsuario), HttpStatus.OK);
     }
 
     @GetMapping("/usuario-despesa")
