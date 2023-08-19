@@ -10,8 +10,9 @@ import java.util.List;
 
 @Repository
 public interface DespesaRepository extends JpaRepository<DespesaEntity,Integer> {
-   public List<DespesaEntity> findByUsuario(UsuarioEntity usuarioEntity);
+    List<DespesaEntity> findByUsuarioEntity(UsuarioEntity usuarioEntity);
 
     @Query(nativeQuery = true,value = "SELECT * FROM DESPESA WHERE ID_USUARIO = :idUsuario")
     List<DespesaEntity> listDespesaListByIdUsuario(Integer idUsuario);
+
 }

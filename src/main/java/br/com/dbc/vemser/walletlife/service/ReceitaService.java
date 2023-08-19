@@ -29,7 +29,7 @@ public class ReceitaService {
 
 
     public ReceitaDTO create(ReceitaCreateDTO receita, Integer idUsuario) {
-        UsuarioDTO usuarioById = usuarioService.findById(idUsuario);
+        UsuarioDTO usuarioById = usuarioService.findByUsuarioEntity(idUsuario);
         try{
        if (usuarioById == null) {
            throw new RegraDeNegocioException("Usuário não encontrado");
@@ -77,12 +77,12 @@ public class ReceitaService {
 
     public List<ReceitaDTO> findByUsuario(Integer idUsuario) {
         try {
-            UsuarioDTO usuarioById = usuarioService.findById(idUsuario);
+            UsuarioDTO usuarioById = usuarioService.findByUsuarioEntity(idUsuario);
             UsuarioEntity usuarioEntity = objectMapper.convertValue(usuarioById, UsuarioEntity.class);
             if (usuarioEntity == null) {
                 throw new RegraDeNegocioException("Usuario não encontrado");
             }
-            List<ReceitaEntity> receitaEntities = receitaRepository.findByUsuario(usuarioEntity);
+            List<ReceitaEntity> receitaEntities = receitaRepository.findByUsuarioEntity(usuarioEntity);
             List<ReceitaDTO> receitasDTO = this.convertToDTOList(receitaEntities);
             return receitasDTO;
         } catch (RegraDeNegocioException e) {
