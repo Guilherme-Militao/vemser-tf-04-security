@@ -81,7 +81,7 @@ public class UsuarioService {
 //            dados.put("email", usuarioDTO.getEmail());
 //            emailService.sendTemplateEmail(dados);
 
-    public UsuarioDTO findById(Integer id) {
+    public UsuarioDTO findByUsuarioEntity(Integer id) {
         try {
             Optional<UsuarioEntity> usuarioExisteOp = usuarioRepository.findById(id);
             if (usuarioExisteOp.isEmpty()) {

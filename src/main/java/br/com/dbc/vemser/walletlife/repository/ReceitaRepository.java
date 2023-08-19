@@ -13,8 +13,8 @@ import java.util.List;
 @Repository
 public interface ReceitaRepository extends JpaRepository<ReceitaEntity, Integer> {
 
-    public List<ReceitaEntity> findByUsuario(UsuarioEntity usuarioEntity);
+    List<ReceitaEntity> findByUsuarioEntity(UsuarioEntity usuarioEntity);
     @Query("Select r From RECEITA r")
-    public Page<ReceitaEntity> findAll(Pageable pageable);
+    Page<ReceitaEntity> findAll(Pageable pageable);
 
 }
