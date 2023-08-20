@@ -103,7 +103,7 @@ public interface UsuarioControllerDoc {
             }
     )
     @PostMapping
-    public ResponseEntity<UsuarioDTO> create(@RequestBody @Valid UsuarioCreateDTO usuario);
+    public ResponseEntity<UsuarioDTO> create(@RequestBody @Valid UsuarioCreateDTO usuario) throws RegraDeNegocioException;
 
 
     @Operation(summary = "Atualiza um Usuário por ID", description = "Busca no banco o usuário a partir de um ID e o atualiza")

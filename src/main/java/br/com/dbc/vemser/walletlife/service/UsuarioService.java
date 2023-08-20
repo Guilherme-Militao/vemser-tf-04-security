@@ -1,8 +1,10 @@
 package br.com.dbc.vemser.walletlife.service;
 
 import br.com.dbc.vemser.walletlife.dto.*;
+import br.com.dbc.vemser.walletlife.entity.CargoEntity;
 import br.com.dbc.vemser.walletlife.exceptions.RegraDeNegocioException;
 import br.com.dbc.vemser.walletlife.entity.UsuarioEntity;
+import br.com.dbc.vemser.walletlife.repository.CargoRepository;
 import br.com.dbc.vemser.walletlife.repository.UsuarioRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
@@ -20,15 +22,20 @@ import java.util.stream.Collectors;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final CargoService cargoService;
     private final ObjectMapper objectMapper;
     private final EmailService emailService;
 
 
     // criação de um objeto
-    public UsuarioDTO create(UsuarioCreateDTO usuario) {
+    public UsuarioDTO create(UsuarioCreateDTO usuario) throws RegraDeNegocioException {
+        CargoEntity cargoEntity = cargoService.getByid(usuario.getTipoCargo());
+
         try {
             UsuarioEntity usuarioEntityConvertido = objectMapper.convertValue(usuario, UsuarioEntity.class);
+            usuarioEntityConvertido.addCargo(cargoEntity);
             UsuarioEntity usuarioEntityCriado = usuarioRepository.save(usuarioEntityConvertido);
+            cargoEntity.addUser(usuarioEntityConvertido);
             UsuarioDTO novoUsuario = this.convertToDTO(usuarioEntityCriado);
             return novoUsuario;
 
