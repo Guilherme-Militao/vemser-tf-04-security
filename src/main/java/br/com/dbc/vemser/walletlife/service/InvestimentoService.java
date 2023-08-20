@@ -3,11 +3,9 @@ package br.com.dbc.vemser.walletlife.service;
 import br.com.dbc.vemser.walletlife.dto.InvestimentoCreateDTO;
 import br.com.dbc.vemser.walletlife.dto.InvestimentoDTO;
 import br.com.dbc.vemser.walletlife.dto.UsuarioDTO;
-import br.com.dbc.vemser.walletlife.exceptions.BancoDeDadosException;
+import br.com.dbc.vemser.walletlife.entity.InvestimentoEntity;
 import br.com.dbc.vemser.walletlife.exceptions.RegraDeNegocioException;
-import br.com.dbc.vemser.walletlife.modelos.Investimento;
-import br.com.dbc.vemser.walletlife.modelos.Receita;
-import br.com.dbc.vemser.walletlife.modelos.Usuario;
+import br.com.dbc.vemser.walletlife.entity.UsuarioEntity;
 import br.com.dbc.vemser.walletlife.repository.InvestimentoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -26,13 +24,13 @@ public class InvestimentoService {
     private final ObjectMapper objectMapper;
 
     public InvestimentoDTO create(InvestimentoCreateDTO investimento,  Integer idUsuario) throws RegraDeNegocioException {
-        UsuarioDTO usuarioById = usuarioService.findById(idUsuario);
+        UsuarioDTO usuarioById = usuarioService.findByUsuarioEntity(idUsuario);
         if (usuarioById != null) {
-            Usuario usuarioConvertido = objectMapper.convertValue(usuarioById, Usuario.class);
-            Investimento entity = objectMapper.convertValue(investimento, Investimento.class);
-            entity.setUsuario(usuarioConvertido);
-            Investimento investimentoConvertido = investimentoRepository.save(entity);
-            return convertToDTO(investimentoConvertido);
+            UsuarioEntity usuarioEntityConvertido = objectMapper.convertValue(usuarioById, UsuarioEntity.class);
+            InvestimentoEntity entity = objectMapper.convertValue(investimento, InvestimentoEntity.class);
+            entity.setUsuarioEntity(usuarioEntityConvertido);
+            InvestimentoEntity investimentoEntityConvertido = investimentoRepository.save(entity);
+            return convertToDTO(investimentoEntityConvertido);
         } else {
             throw new RegraDeNegocioException("Usuário não encontrado");
         }
@@ -44,17 +42,17 @@ public class InvestimentoService {
 
     public InvestimentoDTO update(Integer id, InvestimentoCreateDTO investimento) throws RegraDeNegocioException  {
         try {
-            Optional<Investimento> investimentoRecuperado = investimentoRepository.findById(id);
+            Optional<InvestimentoEntity> investimentoRecuperado = investimentoRepository.findById(id);
             if (investimentoRecuperado.isEmpty()) {
                 throw new RegraDeNegocioException("Investimento não encontrado");
             }
-            Investimento investimentoDados = objectMapper.convertValue(investimento, Investimento.class);
-            Investimento investimentoExiste = investimentoRecuperado.get();
+            InvestimentoEntity investimentoEntityDados = objectMapper.convertValue(investimento, InvestimentoEntity.class);
+            InvestimentoEntity investimentoEntityExiste = investimentoRecuperado.get();
 
-            BeanUtils.copyProperties(investimentoDados, investimentoExiste, "idInvestimento", "usuario");
+            BeanUtils.copyProperties(investimentoEntityDados, investimentoEntityExiste, "idInvestimento", "usuario");
 
-            Investimento investimentoAtualizado = investimentoRepository.save(investimentoExiste);
-            InvestimentoDTO investimentoDTO = objectMapper.convertValue(investimentoAtualizado, InvestimentoDTO.class);
+            InvestimentoEntity investimentoEntityAtualizado = investimentoRepository.save(investimentoEntityExiste);
+            InvestimentoDTO investimentoDTO = objectMapper.convertValue(investimentoEntityAtualizado, InvestimentoDTO.class);
 
             return investimentoDTO;
         } catch (RegraDeNegocioException e) {
@@ -63,29 +61,29 @@ public class InvestimentoService {
     }
 
     public InvestimentoDTO findById(Integer idInvestimento) throws RegraDeNegocioException {
-        Optional<Investimento> investimento = investimentoRepository.findById(idInvestimento);
+        Optional<InvestimentoEntity> investimento = investimentoRepository.findById(idInvestimento);
         if (investimento.isEmpty()){
             throw new RegraDeNegocioException("Investimento não encontrado");
         }
-        Investimento investimentoExistente = investimento.get();
-        InvestimentoDTO investimentoDTO = convertToDTO(investimentoExistente);
+        InvestimentoEntity investimentoEntityExistente = investimento.get();
+        InvestimentoDTO investimentoDTO = convertToDTO(investimentoEntityExistente);
 
         return investimentoDTO;
     }
 
     public List<InvestimentoDTO> findAll() {
-        List<Investimento> investimento = investimentoRepository.findAll();
+        List<InvestimentoEntity> investimentoEntity = investimentoRepository.findAll();
 
-        return convertToDTOList(investimento);
+        return convertToDTOList(investimentoEntity);
     }
 
     public List<InvestimentoDTO> findByUsuario(Integer idUsuario) throws RegraDeNegocioException   {
-        UsuarioDTO usuarioById = usuarioService.findById(idUsuario);
-        Usuario usuarioConvertido = objectMapper.convertValue(usuarioById, Usuario.class);
+        UsuarioDTO usuarioById = usuarioService.findByUsuarioEntity(idUsuario);
+        UsuarioEntity usuarioEntityConvertido = objectMapper.convertValue(usuarioById, UsuarioEntity.class);
 
         if (usuarioById != null){
-            List<Investimento> investimento = investimentoRepository.listInvestimentoListByIdUsuario(idUsuario);
-            List<InvestimentoDTO> investimentoDTO = convertToDTOList(investimento);
+            List<InvestimentoEntity> investimentoEntity = investimentoRepository.listInvestimentoListByIdUsuario(idUsuario);
+            List<InvestimentoDTO> investimentoDTO = convertToDTOList(investimentoEntity);
 
             return investimentoDTO;
         }else {
@@ -93,16 +91,16 @@ public class InvestimentoService {
         }
     }
 
-    public Investimento convertToEntity(InvestimentoCreateDTO dto) {
-        return objectMapper.convertValue(dto, Investimento.class);
+    public InvestimentoEntity convertToEntity(InvestimentoCreateDTO dto) {
+        return objectMapper.convertValue(dto, InvestimentoEntity.class);
     }
 
-    public InvestimentoDTO convertToDTO(Investimento entity) {
+    public InvestimentoDTO convertToDTO(InvestimentoEntity entity) {
         return objectMapper.convertValue(entity, InvestimentoDTO.class);
     }
 
-    public List<InvestimentoDTO> convertToDTOList(List<Investimento> investimentos) {
-        return investimentos.stream()
+    public List<InvestimentoDTO> convertToDTOList(List<InvestimentoEntity> investimentoEntities) {
+        return investimentoEntities.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
