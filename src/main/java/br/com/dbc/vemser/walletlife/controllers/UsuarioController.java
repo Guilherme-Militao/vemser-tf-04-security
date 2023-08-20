@@ -65,7 +65,7 @@ public class UsuarioController implements UsuarioControllerDoc {
     }
 
     @PostMapping
-    public ResponseEntity<UsuarioDTO> create(@RequestBody @Valid UsuarioCreateDTO usuario) {
+    public ResponseEntity<UsuarioDTO> create(@RequestBody @Valid UsuarioCreateDTO usuario) throws RegraDeNegocioException{
         log.info("Usuário: inserir novo");
         return new ResponseEntity<>(usuarioService.create(usuario), HttpStatus.OK);
     }

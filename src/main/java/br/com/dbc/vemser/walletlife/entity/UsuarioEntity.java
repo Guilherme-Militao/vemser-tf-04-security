@@ -62,7 +62,12 @@ public class UsuarioEntity implements UserDetails {
             joinColumns = @JoinColumn(name = "ID_USUARIO"),
             inverseJoinColumns = @JoinColumn(name = "ID_CARGO")
     )
-    private Set<CargoEntity> cargos;
+    private Set<CargoEntity> cargos = new HashSet<>();
+
+    public void addCargo(CargoEntity cargoEntity) {
+        cargoEntity.addUser(this);
+        cargos.add(cargoEntity);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

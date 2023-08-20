@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -28,8 +29,11 @@ public class CargoEntity implements GrantedAuthority {
             joinColumns = @JoinColumn(name = "ID_CARGO"),
             inverseJoinColumns = @JoinColumn(name = "ID_USUARIO")
     )
-    private Set<UsuarioEntity> usuarios;
+    private Set<UsuarioEntity> usuarios = new HashSet<>();
 
+    public void addUser(UsuarioEntity usuarioEntity) {
+        usuarios.add(usuarioEntity);
+    }
     @Override
     public String getAuthority() {
         return nome;
