@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -142,6 +143,8 @@ public class UsuarioService {
         return usuarioRepository.findByLogin(login);
     }
 
+
+
     public Integer getIdLoggedUser() {
         Integer findUserId = Integer.parseInt(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
         return findUserId;
@@ -153,6 +156,27 @@ public class UsuarioService {
         usuarioLoggedDTO.setCargos(usuarioEntity.getCargos());
         return usuarioLoggedDTO;
     }
+
+    public UsuarioDTO updateSenha(Integer id, @Valid UsuarioSenhaDTO usuarioSenhaDTO) {
+        try {
+            Optional<UsuarioEntity> usuarioExisteOp = usuarioRepository.findById(id);
+            if (usuarioExisteOp.isEmpty()) {
+                throw new RegraDeNegocioException("Usuário não encontrado");
+            }
+            UsuarioEntity usuarioEntityDados = objectMapper.convertValue(usuarioSenhaDTO, UsuarioEntity.class);
+            UsuarioEntity usuarioEntityExiste = usuarioExisteOp.get();
+
+            BeanUtils.copyProperties(usuarioEntityDados, usuarioEntityExiste, "idUsuario", "receitaEntities", "despesaEntities", "investimentoEntities", "login", "nome", "dataNascimento", "cpf", "email","cargos");
+
+            UsuarioEntity usuarioEntityAtualizado = usuarioRepository.save(usuarioEntityExiste);
+            UsuarioDTO usuarioDTO = objectMapper.convertValue(usuarioEntityAtualizado, UsuarioDTO.class);
+
+            return usuarioDTO;
+        } catch (RegraDeNegocioException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     public UsuarioEntity findById(Integer idUsuario) throws RegraDeNegocioException {
         return usuarioRepository.findById(idUsuario)

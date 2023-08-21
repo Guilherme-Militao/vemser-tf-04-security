@@ -89,4 +89,10 @@ public class UsuarioController implements UsuarioControllerDoc {
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/{idUsuario}/login")
+    public ResponseEntity<UsuarioDTO> updateLogin(@PathVariable Integer idUsuario, @RequestBody @Valid UsuarioSenhaDTO usuarioSenhaDTO) throws RegraDeNegocioException{
+        log.info("Usuário: inserir novo");
+        return new ResponseEntity<>(usuarioService.updateSenha(idUsuario,usuarioSenhaDTO), HttpStatus.OK);
+    }
+
 }
