@@ -4,7 +4,6 @@ import br.com.dbc.vemser.walletlife.dto.*;
 import br.com.dbc.vemser.walletlife.entity.CargoEntity;
 import br.com.dbc.vemser.walletlife.exceptions.RegraDeNegocioException;
 import br.com.dbc.vemser.walletlife.entity.UsuarioEntity;
-import br.com.dbc.vemser.walletlife.repository.CargoRepository;
 import br.com.dbc.vemser.walletlife.repository.UsuarioRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
@@ -45,14 +44,6 @@ public class UsuarioService {
         return convertToDTO(usuarioEntityCriado);
     }
 
-//            Map<String, String> dados = new HashMap<>();
-//            dados.put("nome", novoUsuario.getNomeCompleto());
-//            String paragrafo = "Estamos felizes em tê-lo como usuário do Wallet Life! :) <br>" +
-//                    "           Seu cadastro foi realizado com sucesso, e agora você pode organizar todas suas finanças!.<br>" +
-//                    "           Aproveite para acessar nossa plataforma e descobrir mais sobre o projeto!<br>";
-//            dados.put("paragrafo", paragrafo);
-//            dados.put("email", novoUsuario.getEmail());
-//            emailService.sendTemplateEmail(dados);
 
     public void remove(Integer id) {
         usuarioRepository.deleteById(id);
@@ -79,14 +70,6 @@ public class UsuarioService {
         }
     }
 
-    //            Map<String, String> dados = new HashMap<>();
-//            dados.put("nome", usuarioDTO.getNomeCompleto());
-//            String paragrafo = "Parece que você atualizou seus dados!<br>" +
-//                               "Deu tudo certo na operação.<br>" +
-//                               "Pode ficar tranquile! :)";
-//            dados.put("paragrafo", paragrafo);
-//            dados.put("email", usuarioDTO.getEmail());
-//            emailService.sendTemplateEmail(dados);
 
     public UsuarioDTO findByUsuarioEntity(Integer id) {
         try {
