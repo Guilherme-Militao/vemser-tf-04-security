@@ -31,11 +31,15 @@ public class UsuarioController implements UsuarioControllerDoc {
         log.info("Usuário: listar todos");
         return new ResponseEntity<>(usuarioService.findAll(), HttpStatus.OK);
     }
+    @GetMapping("/recuperar-usuario-logado")
+    public UsuarioLoggedDTO getLogged() throws RegraDeNegocioException {
+        return usuarioService.getLoggedUser();
+    }
 
     @GetMapping("/{idUsuario}")
     public ResponseEntity<UsuarioDTO> findById(@PathVariable("idUsuario") @Positive Integer idUsuario) {
         log.info("Usuário: listar por Id do usuário");
-        return new ResponseEntity<>(usuarioService.findById(idUsuario), HttpStatus.OK);
+        return new ResponseEntity<>(usuarioService.findByUsuarioEntity(idUsuario), HttpStatus.OK);
     }
 
     @GetMapping("/usuario-despesa")
@@ -65,7 +69,7 @@ public class UsuarioController implements UsuarioControllerDoc {
     }
 
     @PostMapping
-    public ResponseEntity<UsuarioDTO> create(@RequestBody @Valid UsuarioCreateDTO usuario) {
+    public ResponseEntity<UsuarioDTO> create(@RequestBody @Valid UsuarioCreateDTO usuario) throws RegraDeNegocioException{
         log.info("Usuário: inserir novo");
         return new ResponseEntity<>(usuarioService.create(usuario), HttpStatus.OK);
     }
@@ -83,6 +87,12 @@ public class UsuarioController implements UsuarioControllerDoc {
         log.info("Usuário: deletar por id");
         usuarioService.remove(idUsuario);
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{idUsuario}/login")
+    public ResponseEntity<UsuarioDTO> updateLogin(@PathVariable Integer idUsuario, @RequestBody @Valid UsuarioSenhaDTO usuarioSenhaDTO) throws RegraDeNegocioException{
+        log.info("Usuário: inserir novo");
+        return new ResponseEntity<>(usuarioService.updateSenha(idUsuario,usuarioSenhaDTO), HttpStatus.OK);
     }
 
 }

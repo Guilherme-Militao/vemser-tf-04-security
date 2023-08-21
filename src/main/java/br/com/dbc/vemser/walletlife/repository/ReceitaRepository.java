@@ -1,7 +1,7 @@
 package br.com.dbc.vemser.walletlife.repository;
 
-import br.com.dbc.vemser.walletlife.modelos.Receita;
-import br.com.dbc.vemser.walletlife.modelos.Usuario;
+import br.com.dbc.vemser.walletlife.entity.ReceitaEntity;
+import br.com.dbc.vemser.walletlife.entity.UsuarioEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,10 +11,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ReceitaRepository extends JpaRepository<Receita, Integer> {
+public interface ReceitaRepository extends JpaRepository<ReceitaEntity, Integer> {
 
-    public List<Receita> findByUsuario(Usuario usuario);
+    List<ReceitaEntity> findByUsuarioEntity(UsuarioEntity usuarioEntity);
     @Query("Select r From RECEITA r")
-    public Page<Receita> findAll(Pageable pageable);
+    Page<ReceitaEntity> findAll(Pageable pageable);
 
 }

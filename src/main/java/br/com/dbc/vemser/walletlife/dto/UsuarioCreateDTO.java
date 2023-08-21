@@ -1,10 +1,13 @@
 package br.com.dbc.vemser.walletlife.dto;
 
+import br.com.dbc.vemser.walletlife.entity.TipoCargo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
@@ -39,4 +42,12 @@ public class UsuarioCreateDTO {
     @Size(min = 5, max = 30)
     @Schema(description = "Senha de acesso", required = true, example = "senha123")
     private String senha;
+
+    @NotNull
+    private Integer tipoCargo;
+
+    @NotNull
+    @Size(min = 2, max = 255)
+    @Schema(description = "Usuario", required = true, example = "Monkey")
+    private String login;
 }

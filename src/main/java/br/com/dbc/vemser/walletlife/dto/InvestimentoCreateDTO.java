@@ -1,7 +1,7 @@
 package br.com.dbc.vemser.walletlife.dto;
 
-import br.com.dbc.vemser.walletlife.enumerators.TipoDespesaEReceita;
-import br.com.dbc.vemser.walletlife.modelos.Usuario;
+import br.com.dbc.vemser.walletlife.enums.TipoDespesaEReceita;
+import br.com.dbc.vemser.walletlife.entity.UsuarioEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -45,5 +45,5 @@ public class InvestimentoCreateDTO {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
-    private Usuario usuario;
+    private UsuarioEntity usuarioEntity;
 }

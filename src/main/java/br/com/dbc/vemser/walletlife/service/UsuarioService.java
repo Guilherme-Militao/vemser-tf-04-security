@@ -1,8 +1,9 @@
 package br.com.dbc.vemser.walletlife.service;
 
 import br.com.dbc.vemser.walletlife.dto.*;
+import br.com.dbc.vemser.walletlife.entity.CargoEntity;
 import br.com.dbc.vemser.walletlife.exceptions.RegraDeNegocioException;
-import br.com.dbc.vemser.walletlife.modelos.Usuario;
+import br.com.dbc.vemser.walletlife.entity.UsuarioEntity;
 import br.com.dbc.vemser.walletlife.repository.UsuarioRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
@@ -10,10 +11,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
+import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,32 +24,27 @@ import java.util.stream.Collectors;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final CargoService cargoService;
     private final ObjectMapper objectMapper;
     private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
 
     // criação de um objeto
-    public UsuarioDTO create(UsuarioCreateDTO usuario) {
-        try {
-            Usuario usuarioConvertido = objectMapper.convertValue(usuario, Usuario.class);
-            Usuario usuarioCriado = usuarioRepository.save(usuarioConvertido);
-            UsuarioDTO novoUsuario = this.convertToDTO(usuarioCriado);
-            return novoUsuario;
+    public UsuarioDTO create(UsuarioCreateDTO usuario) throws RegraDeNegocioException {
+        CargoEntity cargoEntity = cargoService.getByid(usuario.getTipoCargo());
 
-        } catch (Exception e) {
-            System.err.println("ERRO: " + e.getMessage());
-        }
-        return null;
+        UsuarioEntity usuarioEntityConvertido = objectMapper.convertValue(usuario, UsuarioEntity.class);
+
+        usuarioEntityConvertido.addCargo(cargoEntity);
+        usuarioEntityConvertido.setSenha(passwordEncoder.encode(usuarioEntityConvertido.getSenha()));
+
+        UsuarioEntity usuarioEntityCriado = usuarioRepository.save(usuarioEntityConvertido);
+
+
+        return convertToDTO(usuarioEntityCriado);
     }
 
-//            Map<String, String> dados = new HashMap<>();
-//            dados.put("nome", novoUsuario.getNomeCompleto());
-//            String paragrafo = "Estamos felizes em tê-lo como usuário do Wallet Life! :) <br>" +
-//                    "           Seu cadastro foi realizado com sucesso, e agora você pode organizar todas suas finanças!.<br>" +
-//                    "           Aproveite para acessar nossa plataforma e descobrir mais sobre o projeto!<br>";
-//            dados.put("paragrafo", paragrafo);
-//            dados.put("email", novoUsuario.getEmail());
-//            emailService.sendTemplateEmail(dados);
 
     public void remove(Integer id) {
         usuarioRepository.deleteById(id);
@@ -56,17 +53,17 @@ public class UsuarioService {
     // atualização de um objeto
     public UsuarioDTO update(Integer id, UsuarioCreateDTO usuario) {
         try {
-            Optional<Usuario> usuarioExisteOp = usuarioRepository.findById(id);
+            Optional<UsuarioEntity> usuarioExisteOp = usuarioRepository.findById(id);
             if (usuarioExisteOp.isEmpty()) {
                 throw new RegraDeNegocioException("Usuário não encontrado");
             }
-            Usuario usuarioDados = objectMapper.convertValue(usuario, Usuario.class);
-            Usuario usuarioExiste = usuarioExisteOp.get();
+            UsuarioEntity usuarioEntityDados = objectMapper.convertValue(usuario, UsuarioEntity.class);
+            UsuarioEntity usuarioEntityExiste = usuarioExisteOp.get();
 
-            BeanUtils.copyProperties(usuarioDados, usuarioExiste, "idUsuario", "receitas", "despesas", "investimentos" );
+            BeanUtils.copyProperties(usuarioEntityDados, usuarioEntityExiste, "idUsuario", "receitaEntities", "despesaEntities", "investimentoEntities" );
 
-            Usuario usuarioAtualizado = usuarioRepository.save(usuarioExiste);
-            UsuarioDTO usuarioDTO = objectMapper.convertValue(usuarioAtualizado, UsuarioDTO.class);
+            UsuarioEntity usuarioEntityAtualizado = usuarioRepository.save(usuarioEntityExiste);
+            UsuarioDTO usuarioDTO = objectMapper.convertValue(usuarioEntityAtualizado, UsuarioDTO.class);
 
             return usuarioDTO;
         } catch (RegraDeNegocioException e) {
@@ -74,23 +71,15 @@ public class UsuarioService {
         }
     }
 
-    //            Map<String, String> dados = new HashMap<>();
-//            dados.put("nome", usuarioDTO.getNomeCompleto());
-//            String paragrafo = "Parece que você atualizou seus dados!<br>" +
-//                               "Deu tudo certo na operação.<br>" +
-//                               "Pode ficar tranquile! :)";
-//            dados.put("paragrafo", paragrafo);
-//            dados.put("email", usuarioDTO.getEmail());
-//            emailService.sendTemplateEmail(dados);
 
-    public UsuarioDTO findById(Integer id) {
+    public UsuarioDTO findByUsuarioEntity(Integer id) {
         try {
-            Optional<Usuario> usuarioExisteOp = usuarioRepository.findById(id);
+            Optional<UsuarioEntity> usuarioExisteOp = usuarioRepository.findById(id);
             if (usuarioExisteOp.isEmpty()) {
                 throw new RegraDeNegocioException("Usuário não encontrado");
             }
-            Usuario usuarioExiste = usuarioExisteOp.get();
-            UsuarioDTO usuarioDTO = objectMapper.convertValue(usuarioExiste, UsuarioDTO.class);
+            UsuarioEntity usuarioEntityExiste = usuarioExisteOp.get();
+            UsuarioDTO usuarioDTO = objectMapper.convertValue(usuarioEntityExiste, UsuarioDTO.class);
 
             return usuarioDTO;
         } catch (RegraDeNegocioException e) {
@@ -126,28 +115,68 @@ public class UsuarioService {
 
     public List<UsuarioDadosDTO> findUsuarioDados(Integer idUsuario, Integer pagina, Integer quantidadeRegistros) throws RegraDeNegocioException {
         if (idUsuario != null){
-            Optional<Usuario> usuarioOP = usuarioRepository.findById(idUsuario);
+            Optional<UsuarioEntity> usuarioOP = usuarioRepository.findById(idUsuario);
             if (usuarioOP.isEmpty()){
                 throw new RegraDeNegocioException("Usuário não encontrado");
             }
         }
         Pageable pageable = PageRequest.of(pagina, quantidadeRegistros);
-        Page<Usuario> dados = usuarioRepository.findAllComOptional(idUsuario, pageable);
-        List<Usuario> usuarioDadosDTOS = dados.getContent();
+        Page<UsuarioEntity> dados = usuarioRepository.findAllComOptional(idUsuario, pageable);
+        List<UsuarioEntity> usuarioEntityDadosDTOS = dados.getContent();
 
-        return usuarioDadosDTOS.stream().map(
+        return usuarioEntityDadosDTOS.stream().map(
                 usuario -> new UsuarioDadosDTO(usuario)
         ).collect(Collectors.toList());
     }
 
-    private UsuarioDTO convertToDTO(Usuario usuario) {
-        UsuarioDTO usuarioDTO = objectMapper.convertValue(usuario, UsuarioDTO.class);
+    private UsuarioDTO convertToDTO(UsuarioEntity usuarioEntity) {
+        UsuarioDTO usuarioDTO = objectMapper.convertValue(usuarioEntity, UsuarioDTO.class);
         return usuarioDTO;
     }
 
-    private List<UsuarioDTO> convertToDTOList(List<Usuario> listaUsuarios) {
-        return listaUsuarios.stream()
+    private List<UsuarioDTO> convertToDTOList(List<UsuarioEntity> listaUsuarioEntities) {
+        return listaUsuarioEntities.stream()
                 .map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    public Optional<UsuarioEntity> findByLogin(String login) {
+        return usuarioRepository.findByLogin(login);
+    }
+
+
+
+    public Integer getIdLoggedUser() {
+        Integer findUserId = Integer.parseInt(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        return findUserId;
+    }
+
+    public UsuarioLoggedDTO getLoggedUser() throws RegraDeNegocioException {
+        UsuarioEntity usuarioEntity= findById(getIdLoggedUser());
+        UsuarioLoggedDTO usuarioLoggedDTO = objectMapper.convertValue(usuarioEntity,UsuarioLoggedDTO.class);
+        usuarioLoggedDTO.setCargos(usuarioEntity.getCargos());
+        return usuarioLoggedDTO;
+    }
+
+    public UsuarioDTO updateSenha(Integer id, @Valid UsuarioSenhaDTO usuarioSenhaDTO) {
+        UsuarioEntity usuarioExisteOp = usuarioRepository.getById(id);
+
+        UsuarioDTO usuarioDTOSenha = objectMapper.convertValue(usuarioSenhaDTO, UsuarioDTO.class);
+
+        usuarioExisteOp.setSenha(passwordEncoder.encode(usuarioDTOSenha.getSenha()));
+
+        BeanUtils.copyProperties(usuarioExisteOp, usuarioDTOSenha, "idUsuario", "receitaEntities", "despesaEntities", "investimentoEntities", "login", "nome", "dataNascimento", "cpf", "email","cargos");
+
+        UsuarioEntity usuarioEntityAtualizado = usuarioRepository.save(usuarioExisteOp);
+        UsuarioDTO usuarioDTO = objectMapper.convertValue(usuarioEntityAtualizado, UsuarioDTO.class);
+
+
+        return usuarioDTO;
+    }
+
+
+    public UsuarioEntity findById(Integer idUsuario) throws RegraDeNegocioException {
+        return usuarioRepository.findById(idUsuario)
+                .orElseThrow(() ->
+                        new RegraDeNegocioException("Usuário não encontrado!"));
+    }
 }
