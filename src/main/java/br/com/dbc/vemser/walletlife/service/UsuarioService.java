@@ -45,14 +45,6 @@ public class UsuarioService {
         return convertToDTO(usuarioEntityCriado);
     }
 
-//            Map<String, String> dados = new HashMap<>();
-//            dados.put("nome", novoUsuario.getNomeCompleto());
-//            String paragrafo = "Estamos felizes em tê-lo como usuário do Wallet Life! :) <br>" +
-//                    "           Seu cadastro foi realizado com sucesso, e agora você pode organizar todas suas finanças!.<br>" +
-//                    "           Aproveite para acessar nossa plataforma e descobrir mais sobre o projeto!<br>";
-//            dados.put("paragrafo", paragrafo);
-//            dados.put("email", novoUsuario.getEmail());
-//            emailService.sendTemplateEmail(dados);
 
     public void remove(Integer id) {
         usuarioRepository.deleteById(id);
@@ -68,7 +60,7 @@ public class UsuarioService {
             UsuarioEntity usuarioEntityDados = objectMapper.convertValue(usuario, UsuarioEntity.class);
             UsuarioEntity usuarioEntityExiste = usuarioExisteOp.get();
 
-            BeanUtils.copyProperties(usuarioEntityDados, usuarioEntityExiste, "idUsuario", "receitas", "despesas", "investimentos" );
+            BeanUtils.copyProperties(usuarioEntityDados, usuarioEntityExiste, "idUsuario", "receitaEntities", "despesaEntities", "investimentoEntities" );
 
             UsuarioEntity usuarioEntityAtualizado = usuarioRepository.save(usuarioEntityExiste);
             UsuarioDTO usuarioDTO = objectMapper.convertValue(usuarioEntityAtualizado, UsuarioDTO.class);
@@ -79,14 +71,6 @@ public class UsuarioService {
         }
     }
 
-    //            Map<String, String> dados = new HashMap<>();
-//            dados.put("nome", usuarioDTO.getNomeCompleto());
-//            String paragrafo = "Parece que você atualizou seus dados!<br>" +
-//                               "Deu tudo certo na operação.<br>" +
-//                               "Pode ficar tranquile! :)";
-//            dados.put("paragrafo", paragrafo);
-//            dados.put("email", usuarioDTO.getEmail());
-//            emailService.sendTemplateEmail(dados);
 
     public UsuarioDTO findByUsuarioEntity(Integer id) {
         try {

@@ -1,6 +1,5 @@
 package br.com.dbc.vemser.walletlife.security;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,17 +26,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
-
-//    private void authenticate(Optional<UsuarioEntity> optionalUsuarioEntity) {
-//        if (optionalUsuarioEntity.isPresent()) {
-//            UsuarioEntity usuarioEntity = optionalUsuarioEntity.get();
-//            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-//                    new UsernamePasswordAuthenticationToken(usuarioEntity.getLogin(), usuarioEntity.getSenha(), Collections.emptyList());
-//            SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-//        } else {
-//            SecurityContextHolder.getContext().setAuthentication(null);
-//        }
-//    }
 
     private String getTokenFromHeader(HttpServletRequest request) {
         String token = request.getHeader("Authorization");

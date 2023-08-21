@@ -37,7 +37,7 @@ public class UsuarioEntity implements UserDetails {
     @Column(name = "EMAIL")
     private String email;
 
-    @Column(name = "login")
+    @Column(name = "LOGIN")
     private String login;
 
     @Column(name = "SENHA")
