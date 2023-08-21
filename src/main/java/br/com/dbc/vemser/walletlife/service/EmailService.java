@@ -25,7 +25,7 @@ public class EmailService {
     private final JavaMailSender mailSender;
     private final Configuration fmConfiguration;
 
-    private String from = "Kirmct de Abreu <kirmct.neto@dbccompany.com.br>";
+    private String from = "Diogo Bruno <diogo.neves@dbccompany.com.br>";
 
     @Value("${spring.mail.username}")
     private String username;
@@ -46,7 +46,7 @@ public class EmailService {
         MimeMessageHelper helper = new MimeMessageHelper(email, true);
 
         helper.setFrom(from);
-        helper.setTo("kirmctneto@gmail.com");
+        helper.setTo("diogobruno06@outlook.com");
         helper.setSubject("email com anexo");
         helper.setText("enviando email com anexo\npulando linha");
 
