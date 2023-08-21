@@ -174,23 +174,19 @@ public class UsuarioService {
     }
 
     public UsuarioDTO updateSenha(Integer id, @Valid UsuarioSenhaDTO usuarioSenhaDTO) {
-        try {
-            Optional<UsuarioEntity> usuarioExisteOp = usuarioRepository.findById(id);
-            if (usuarioExisteOp.isEmpty()) {
-                throw new RegraDeNegocioException("Usuário não encontrado");
-            }
-            UsuarioEntity usuarioEntityDados = objectMapper.convertValue(usuarioSenhaDTO, UsuarioEntity.class);
-            UsuarioEntity usuarioEntityExiste = usuarioExisteOp.get();
+        UsuarioEntity usuarioExisteOp = usuarioRepository.getById(id);
 
-            BeanUtils.copyProperties(usuarioEntityDados, usuarioEntityExiste, "idUsuario", "receitaEntities", "despesaEntities", "investimentoEntities", "login", "nome", "dataNascimento", "cpf", "email","cargos");
+        UsuarioDTO usuarioDTOSenha = objectMapper.convertValue(usuarioSenhaDTO, UsuarioDTO.class);
 
-            UsuarioEntity usuarioEntityAtualizado = usuarioRepository.save(usuarioEntityExiste);
-            UsuarioDTO usuarioDTO = objectMapper.convertValue(usuarioEntityAtualizado, UsuarioDTO.class);
+        usuarioExisteOp.setSenha(passwordEncoder.encode(usuarioDTOSenha.getSenha()));
 
-            return usuarioDTO;
-        } catch (RegraDeNegocioException e) {
-            throw new RuntimeException(e);
-        }
+        BeanUtils.copyProperties(usuarioExisteOp, usuarioDTOSenha, "idUsuario", "receitaEntities", "despesaEntities", "investimentoEntities", "login", "nome", "dataNascimento", "cpf", "email","cargos");
+
+        UsuarioEntity usuarioEntityAtualizado = usuarioRepository.save(usuarioExisteOp);
+        UsuarioDTO usuarioDTO = objectMapper.convertValue(usuarioEntityAtualizado, UsuarioDTO.class);
+
+
+        return usuarioDTO;
     }
 
 
