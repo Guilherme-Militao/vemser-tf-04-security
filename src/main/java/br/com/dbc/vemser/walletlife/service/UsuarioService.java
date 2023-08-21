@@ -12,6 +12,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -25,24 +27,22 @@ public class UsuarioService {
     private final CargoService cargoService;
     private final ObjectMapper objectMapper;
     private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
 
     // criação de um objeto
     public UsuarioDTO create(UsuarioCreateDTO usuario) throws RegraDeNegocioException {
         CargoEntity cargoEntity = cargoService.getByid(usuario.getTipoCargo());
 
-        try {
-            UsuarioEntity usuarioEntityConvertido = objectMapper.convertValue(usuario, UsuarioEntity.class);
-            usuarioEntityConvertido.addCargo(cargoEntity);
-            UsuarioEntity usuarioEntityCriado = usuarioRepository.save(usuarioEntityConvertido);
-            cargoEntity.addUser(usuarioEntityConvertido);
-            UsuarioDTO novoUsuario = this.convertToDTO(usuarioEntityCriado);
-            return novoUsuario;
+        UsuarioEntity usuarioEntityConvertido = objectMapper.convertValue(usuario, UsuarioEntity.class);
 
-        } catch (Exception e) {
-            System.err.println("ERRO: " + e.getMessage());
-        }
-        return null;
+        usuarioEntityConvertido.addCargo(cargoEntity);
+        usuarioEntityConvertido.setSenha(passwordEncoder.encode(usuarioEntityConvertido.getSenha()));
+
+        UsuarioEntity usuarioEntityCriado = usuarioRepository.save(usuarioEntityConvertido);
+
+
+        return convertToDTO(usuarioEntityCriado);
     }
 
 //            Map<String, String> dados = new HashMap<>();
@@ -159,4 +159,21 @@ public class UsuarioService {
         return usuarioRepository.findByLogin(login);
     }
 
+    public Integer getIdLoggedUser() {
+        Integer findUserId = Integer.parseInt(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        return findUserId;
+    }
+
+    public UsuarioLoggedDTO getLoggedUser() throws RegraDeNegocioException {
+        UsuarioEntity usuarioEntity= findById(getIdLoggedUser());
+        UsuarioLoggedDTO usuarioLoggedDTO = objectMapper.convertValue(usuarioEntity,UsuarioLoggedDTO.class);
+        usuarioLoggedDTO.setCargos(usuarioEntity.getCargos());
+        return usuarioLoggedDTO;
+    }
+
+    public UsuarioEntity findById(Integer idUsuario) throws RegraDeNegocioException {
+        return usuarioRepository.findById(idUsuario)
+                .orElseThrow(() ->
+                        new RegraDeNegocioException("Usuário não encontrado!"));
+    }
 }

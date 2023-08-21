@@ -31,6 +31,10 @@ public class UsuarioController implements UsuarioControllerDoc {
         log.info("Usuário: listar todos");
         return new ResponseEntity<>(usuarioService.findAll(), HttpStatus.OK);
     }
+    @GetMapping("/recuperar-usuario-logado")
+    public UsuarioLoggedDTO getLogged() throws RegraDeNegocioException {
+        return usuarioService.getLoggedUser();
+    }
 
     @GetMapping("/{idUsuario}")
     public ResponseEntity<UsuarioDTO> findById(@PathVariable("idUsuario") @Positive Integer idUsuario) {

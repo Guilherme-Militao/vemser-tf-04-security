@@ -30,10 +30,6 @@ public class CargoEntity implements GrantedAuthority {
             inverseJoinColumns = @JoinColumn(name = "ID_USUARIO")
     )
     private Set<UsuarioEntity> usuarios = new HashSet<>();
-
-    public void addUser(UsuarioEntity usuarioEntity) {
-        usuarios.add(usuarioEntity);
-    }
     @Override
     public String getAuthority() {
         return nome;

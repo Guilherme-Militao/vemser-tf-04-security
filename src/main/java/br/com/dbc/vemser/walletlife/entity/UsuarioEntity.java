@@ -65,8 +65,7 @@ public class UsuarioEntity implements UserDetails {
     private Set<CargoEntity> cargos = new HashSet<>();
 
     public void addCargo(CargoEntity cargoEntity) {
-        cargoEntity.addUser(this);
-        cargos.add(cargoEntity);
+        this.cargos.add(cargoEntity);
     }
 
     @Override
