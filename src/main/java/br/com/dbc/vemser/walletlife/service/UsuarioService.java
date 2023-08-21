@@ -12,6 +12,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -156,5 +157,23 @@ public class UsuarioService {
 
     public Optional<UsuarioEntity> findByLogin(String login) {
         return usuarioRepository.findByLogin(login);
+    }
+
+    public Integer getIdLoggedUser() {
+        Integer findUserId = Integer.parseInt(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        return findUserId;
+    }
+
+    public UsuarioLoggedDTO getLoggedUser() throws RegraDeNegocioException {
+        UsuarioEntity usuarioEntity= findById(getIdLoggedUser());
+        UsuarioLoggedDTO usuarioLoggedDTO = objectMapper.convertValue(usuarioEntity,UsuarioLoggedDTO.class);
+        usuarioLoggedDTO.setCargos(usuarioEntity.getCargos());
+        return usuarioLoggedDTO;
+    }
+
+    public UsuarioEntity findById(Integer idUsuario) throws RegraDeNegocioException {
+        return usuarioRepository.findById(idUsuario)
+                .orElseThrow(() ->
+                        new RegraDeNegocioException("Usuário não encontrado!"));
     }
 }
