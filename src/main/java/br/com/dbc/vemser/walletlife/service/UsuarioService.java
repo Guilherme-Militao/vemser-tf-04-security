@@ -60,7 +60,7 @@ public class UsuarioService {
             UsuarioEntity usuarioEntityDados = objectMapper.convertValue(usuario, UsuarioEntity.class);
             UsuarioEntity usuarioEntityExiste = usuarioExisteOp.get();
 
-            BeanUtils.copyProperties(usuarioEntityDados, usuarioEntityExiste, "idUsuario", "receitas", "despesas", "investimentos" );
+            BeanUtils.copyProperties(usuarioEntityDados, usuarioEntityExiste, "idUsuario", "receitaEntities", "despesaEntities", "investimentoEntities" );
 
             UsuarioEntity usuarioEntityAtualizado = usuarioRepository.save(usuarioEntityExiste);
             UsuarioDTO usuarioDTO = objectMapper.convertValue(usuarioEntityAtualizado, UsuarioDTO.class);
