@@ -2,7 +2,6 @@ package br.com.dbc.vemser.walletlife.controllers;
 
 import br.com.dbc.vemser.walletlife.doc.UsuarioControllerDoc;
 import br.com.dbc.vemser.walletlife.dto.*;
-import br.com.dbc.vemser.walletlife.entity.UsuarioEntity;
 import br.com.dbc.vemser.walletlife.exceptions.RegraDeNegocioException;
 import br.com.dbc.vemser.walletlife.service.UsuarioService;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +30,10 @@ public class UsuarioController implements UsuarioControllerDoc {
     public ResponseEntity<List<UsuarioDTO>> findAll() {
         log.info("Usuário: listar todos");
         return new ResponseEntity<>(usuarioService.findAll(), HttpStatus.OK);
+    }
+    @GetMapping("/recuperar-usuario-logado")
+    public UsuarioLoggedDTO getLogged() throws RegraDeNegocioException {
+        return usuarioService.getLoggedUser();
     }
 
     @GetMapping("/{idUsuario}")
@@ -71,11 +74,6 @@ public class UsuarioController implements UsuarioControllerDoc {
         return new ResponseEntity<>(usuarioService.create(usuario), HttpStatus.OK);
     }
 
-    @PostMapping("/teste")
-    public ResponseEntity<UsuarioEntity> testeCreate(@RequestBody @Valid UsuarioCreateDTO usuario) throws RegraDeNegocioException{
-        log.info("Usuário: inserir novo");
-        return new ResponseEntity<>(usuarioService.testeCreate(usuario), HttpStatus.OK);
-    }
     @PutMapping("/{idUsuario}")
     public ResponseEntity<UsuarioDTO> update(@PathVariable @Positive Integer idUsuario,
                                              @RequestBody @Valid UsuarioCreateDTO usuario) {
