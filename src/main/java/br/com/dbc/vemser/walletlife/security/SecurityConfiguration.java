@@ -3,12 +3,12 @@ package br.com.dbc.vemser.walletlife.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -33,12 +33,17 @@ public class SecurityConfiguration {
                 .csrf().disable()
                 .authorizeHttpRequests((authz) ->  authz
                         .antMatchers("/auth", "/").permitAll()
-                        .antMatchers("/contato,", "/").permitAll()
-                        .antMatchers("/endereco", "/").permitAll()
-                        .antMatchers("/pessoa", "/").permitAll()
-                        .antMatchers("/pet", "/").permitAll()
-                        .antMatchers("/professor", "/").permitAll()
-                        .anyRequest().authenticated()
+                        .antMatchers(HttpMethod.GET, "/usuario/{idUsuario:[0-9]+}").hasAnyRole("ADMIN", "USUARIO")
+                        .antMatchers(HttpMethod.GET, "/receita/{idUsuario:[0-9]+}").hasAnyRole("ADMIN", "USUARIO")
+                        .antMatchers(HttpMethod.GET, "/investimento/{idUsuario:[0-9]+}").hasAnyRole("ADMIN", "USUARIO")
+                        .antMatchers(HttpMethod.GET, "/despesa/{idUsuario:[0-9]+}").hasAnyRole("ADMIN", "USUARIO")
+                        .antMatchers(HttpMethod.PUT, "/usuario/{idUsuario:[0-9]+}/login").hasAnyRole("ADMIN", "USUARIO")
+                        .antMatchers(HttpMethod.DELETE, "/usuario/{idUsuario:[0-9]+}").hasAnyRole("ADMIN", "USUARIO")
+                        .antMatchers("/usuario/**").hasRole("ADMIN")
+                        .antMatchers("/receita/**").hasRole("ADMIN")
+                        .antMatchers("/investimento/**").hasRole("ADMIN")
+                        .antMatchers("/despesa/**").hasRole("ADMIN")
+                        .anyRequest().denyAll()
                 );
         http.addFilterBefore(new TokenAuthenticationFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
 
