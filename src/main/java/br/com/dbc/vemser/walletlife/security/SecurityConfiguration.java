@@ -33,16 +33,17 @@ public class SecurityConfiguration {
                 .csrf().disable()
                 .authorizeHttpRequests((authz) ->  authz
                         .antMatchers("/auth", "/").permitAll()
+                        .antMatchers("/auth/criar-usuario").permitAll()
                         .antMatchers(HttpMethod.GET, "/usuario/{idUsuario:[0-9]+}").hasAnyRole("ADMIN", "USUARIO")
                         .antMatchers(HttpMethod.GET, "/receita/{idUsuario:[0-9]+}").hasAnyRole("ADMIN", "USUARIO")
                         .antMatchers(HttpMethod.GET, "/investimento/{idUsuario:[0-9]+}").hasAnyRole("ADMIN", "USUARIO")
                         .antMatchers(HttpMethod.GET, "/despesa/{idUsuario:[0-9]+}").hasAnyRole("ADMIN", "USUARIO")
                         .antMatchers(HttpMethod.PUT, "/usuario/{idUsuario:[0-9]+}/login").hasAnyRole("ADMIN", "USUARIO")
                         .antMatchers(HttpMethod.DELETE, "/usuario/{idUsuario:[0-9]+}").hasAnyRole("ADMIN", "USUARIO")
-                        .antMatchers("/usuario/**").hasRole("ADMIN")
-                        .antMatchers("/receita/**").hasRole("ADMIN")
-                        .antMatchers("/investimento/**").hasRole("ADMIN")
-                        .antMatchers("/despesa/**").hasRole("ADMIN")
+                        .antMatchers("/usuario/**").hasAnyRole("ADMIN","USUARIO")
+                        .antMatchers("/receita/**").hasAnyRole("ADMIN","USUARIO")
+                        .antMatchers(HttpMethod.POST, "/investimentos/{idUsuario:[0-9]+}").hasAnyRole("ADMIN", "USUARIO")
+                        .antMatchers("/despesa/**").hasAnyRole("ADMIN","USUARIO")
                         .anyRequest().denyAll()
                 );
         http.addFilterBefore(new TokenAuthenticationFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
