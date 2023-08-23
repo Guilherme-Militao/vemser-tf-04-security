@@ -32,12 +32,13 @@ public class UsuarioService {
 
     // criação de um objeto
     public UsuarioDTO create(UsuarioCreateDTO usuario) throws RegraDeNegocioException {
-        CargoEntity cargoEntity = cargoService.getByid(usuario.getTipoCargo());
+        CargoEntity cargoEntity = cargoService.getByid(2);
 
         UsuarioEntity usuarioEntityConvertido = objectMapper.convertValue(usuario, UsuarioEntity.class);
 
         usuarioEntityConvertido.addCargo(cargoEntity);
         usuarioEntityConvertido.setSenha(passwordEncoder.encode(usuarioEntityConvertido.getSenha()));
+        usuarioEntityConvertido.setLogin(usuario.getEmail());
 
         UsuarioEntity usuarioEntityCriado = usuarioRepository.save(usuarioEntityConvertido);
 
@@ -46,8 +47,8 @@ public class UsuarioService {
     }
 
 
-    public void remove(Integer id) {
-        usuarioRepository.deleteById(id);
+    public void remove(Integer idUsuario) {
+        usuarioRepository.deleteById(idUsuario);
     }
 
     // atualização de um objeto
@@ -73,8 +74,9 @@ public class UsuarioService {
 
 
     public UsuarioDTO findByUsuarioEntity(Integer id) {
+        Integer idUser = id;
         try {
-            Optional<UsuarioEntity> usuarioExisteOp = usuarioRepository.findById(id);
+            Optional<UsuarioEntity> usuarioExisteOp = usuarioRepository.findById(getIdLoggedUser());
             if (usuarioExisteOp.isEmpty()) {
                 throw new RegraDeNegocioException("Usuário não encontrado");
             }
@@ -96,32 +98,32 @@ public class UsuarioService {
     }
 
     public Set<UsuarioComDespesaDTO> findAllUsuariosDespesa(){
-        return usuarioRepository.findAllUsuariosDespesa();
+        return usuarioRepository.findAllUsuariosDespesa(getIdLoggedUser());
     }
 
     public List<UsuarioComReceitaDTO> findAllUsuarioReceita(Double valor, Integer pagina, Integer quantidadeRegistros){
         Pageable pageable = PageRequest.of(pagina, quantidadeRegistros);
-        Page<UsuarioComReceitaDTO> receitas = usuarioRepository.findallUsuarioReceita(valor, pageable);
+        Page<UsuarioComReceitaDTO> receitas = usuarioRepository.findallUsuarioReceita(valor, pageable, getIdLoggedUser());
         List<UsuarioComReceitaDTO> usuarioComReceitaDTOS = receitas.getContent();
         return usuarioComReceitaDTOS;
     }
 
     public List<UsuarioComInvestimentoDTO> findUsuariosByInvestimentoCorretora(String corretora, Integer pagina, Integer quantidadeRegistros){
         Pageable pageable = PageRequest.of(pagina, quantidadeRegistros);
-        Page<UsuarioComInvestimentoDTO> investimento = usuarioRepository.findUsuariosByInvestimentoCorretora(corretora, pageable);
+        Page<UsuarioComInvestimentoDTO> investimento = usuarioRepository.findUsuariosByInvestimentoCorretora(corretora, pageable, getIdLoggedUser());
         List<UsuarioComInvestimentoDTO> usuarioComInvestimentoDTOS = investimento.getContent();
         return usuarioComInvestimentoDTOS;
     }
 
     public List<UsuarioDadosDTO> findUsuarioDados(Integer idUsuario, Integer pagina, Integer quantidadeRegistros) throws RegraDeNegocioException {
-        if (idUsuario != null){
-            Optional<UsuarioEntity> usuarioOP = usuarioRepository.findById(idUsuario);
-            if (usuarioOP.isEmpty()){
-                throw new RegraDeNegocioException("Usuário não encontrado");
-            }
-        }
+//        if (idUsuario != null){
+//            Optional<UsuarioEntity> usuarioOP = usuarioRepository.findById(idUsuario);
+//            if (usuarioOP.isEmpty()){
+//                throw new RegraDeNegocioException("Usuário não encontrado");
+//            }
+//        }
         Pageable pageable = PageRequest.of(pagina, quantidadeRegistros);
-        Page<UsuarioEntity> dados = usuarioRepository.findAllComOptional(idUsuario, pageable);
+        Page<UsuarioEntity> dados = usuarioRepository.findAllComOptional(getIdLoggedUser(), pageable);
         List<UsuarioEntity> usuarioEntityDadosDTOS = dados.getContent();
 
         return usuarioEntityDadosDTOS.stream().map(

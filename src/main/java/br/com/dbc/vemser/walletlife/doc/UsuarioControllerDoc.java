@@ -94,16 +94,16 @@ public interface UsuarioControllerDoc {
 
 
 
-    @Operation(summary = "Insere um novo usuário", description = "Insere um novo usuário no banco")
-    @ApiResponses(
-            value = {
-                    @ApiResponse(responseCode = "200", description = "Retorna o usuário criado"),
-                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
-                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
-            }
-    )
-    @PostMapping
-    public ResponseEntity<UsuarioDTO> create(@RequestBody @Valid UsuarioCreateDTO usuario) throws RegraDeNegocioException;
+//    @Operation(summary = "Insere um novo usuário", description = "Insere um novo usuário no banco")
+//    @ApiResponses(
+//            value = {
+//                    @ApiResponse(responseCode = "200", description = "Retorna o usuário criado"),
+//                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
+//                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
+//            }
+//    )
+//    @PostMapping
+//    public ResponseEntity<UsuarioDTO> create(@RequestBody @Valid UsuarioCreateDTO usuario) throws RegraDeNegocioException;
 
 
     @Operation(summary = "Atualiza um Usuário por ID", description = "Busca no banco o usuário a partir de um ID e o atualiza")
@@ -128,4 +128,16 @@ public interface UsuarioControllerDoc {
     )
     @DeleteMapping("/{idUsuario}")
     public ResponseEntity<Void> remove(@PathVariable Integer idUsuario);
+
+
+//    @Operation(summary = "Insere um novo usuário", description = "Insere um novo usuário no banco")
+//    @ApiResponses(
+//            value = {
+//                    @ApiResponse(responseCode = "200", description = "Retorna o usuário criado"),
+//                    @ApiResponse(responseCode = "403", description = "Você não tem permissão para acessar este recurso"),
+//                    @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
+//            }
+//    )
+//    @PostMapping
+//    public ResponseEntity<UsuarioDTO> create(@RequestBody @Valid UsuarioCreateDTO usuario) throws RegraDeNegocioException;
 }

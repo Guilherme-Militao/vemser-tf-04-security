@@ -20,17 +20,18 @@ public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Integer>
         SELECT NEW br.com.dbc.vemser.walletlife.dto.UsuarioComDespesaDTO(u.idUsuario, u.nome, d.idDespesa, d.valor, d.descricao)
         FROM Usuario u
         JOIN u.despesaEntities d
+        where u.idUsuario = :idPessoa
     """)
-    Set<UsuarioComDespesaDTO> findAllUsuariosDespesa();
+    Set<UsuarioComDespesaDTO> findAllUsuariosDespesa(Integer idPessoa);
 
     @Query("""
         SELECT NEW br.com.dbc.vemser.walletlife.dto.UsuarioComInvestimentoDTO
         (u.idUsuario, u.nome, i.idInvestimento, i.valor, i.corretora)
         FROM Usuario u
         JOIN u.investimentoEntities i
-        WHERE (:corretora is null OR trim(upper(i.corretora)) = trim(upper(:corretora)))
+        WHERE (:corretora is null OR trim(upper(i.corretora)) = trim(upper(:corretora))) AND u.idUsuario=:idPessoa
     """)
-    Page<UsuarioComInvestimentoDTO> findUsuariosByInvestimentoCorretora(String corretora, Pageable pageable);
+    Page<UsuarioComInvestimentoDTO> findUsuariosByInvestimentoCorretora(String corretora, Pageable pageable, Integer idPessoa);
 
     @Query("""
         SELECT new br.com.dbc.vemser.walletlife.dto.UsuarioComReceitaDTO
@@ -38,11 +39,12 @@ public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Integer>
         FROM Usuario u
         JOIN u.receitaEntities r
         WHERE (:valor is null or r.valor > :valor)
+        AND u.idUsuario=:idPessoa
     """)
-    Page<UsuarioComReceitaDTO> findallUsuarioReceita(@Param("valor") Double valor, Pageable pageable);
+    Page<UsuarioComReceitaDTO> findallUsuarioReceita(@Param("valor") Double valor, Pageable pageable, Integer idPessoa);
 
 
-    @Query("Select u From Usuario u where (:idUsuario is null or u.idUsuario = :idUsuario)")
+    @Query("Select u From Usuario u where u.idUsuario = :idUsuario")
     Page<UsuarioEntity> findAllComOptional(@Param("idUsuario") Integer idUsuario, Pageable pageable);
 
     Optional<UsuarioEntity> findByLogin(String login);
