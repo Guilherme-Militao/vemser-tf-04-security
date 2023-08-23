@@ -68,11 +68,11 @@ public class UsuarioController implements UsuarioControllerDoc {
         return new ResponseEntity<>(usuarioService.findUsuarioDados(idUsuario, pagina, quantidadeRegistros), HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<UsuarioDTO> create(@RequestBody @Valid UsuarioCreateDTO usuario) throws RegraDeNegocioException{
-        log.info("Usuário: inserir novo");
-        return new ResponseEntity<>(usuarioService.create(usuario), HttpStatus.OK);
-    }
+//    @PostMapping
+//    public ResponseEntity<UsuarioDTO> create(@RequestBody @Valid UsuarioCreateDTO usuario) throws RegraDeNegocioException{
+//        log.info("Usuário: inserir novo");
+//        return new ResponseEntity<>(usuarioService.create(usuario), HttpStatus.OK);
+//    }
 
     @PutMapping("/{idUsuario}")
     public ResponseEntity<UsuarioDTO> update(@PathVariable @Positive Integer idUsuario,
@@ -83,7 +83,7 @@ public class UsuarioController implements UsuarioControllerDoc {
     }
 
     @DeleteMapping("/{idUsuario}")
-    public ResponseEntity<Void> remove(@PathVariable Integer idUsuario) {
+    public ResponseEntity<Void> remove(@PathVariable("idUsuario") Integer idUsuario) {
         log.info("Usuário: deletar por id");
         usuarioService.remove(idUsuario);
         return ResponseEntity.ok().build();

@@ -1,17 +1,10 @@
 package br.com.dbc.vemser.walletlife.dto;
 
-import br.com.dbc.vemser.walletlife.entity.TipoCargo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PastOrPresent;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Data
@@ -20,7 +13,7 @@ import java.time.LocalDate;
 public class UsuarioCreateDTO {
     @NotNull
     @Size(min = 2, max = 255)
-    @Schema(description = "Nome da Pessoa", required = true, example = "Monkey D. Luffy")
+    @Schema(description = "Nome da Pessoa", required = true, example = "Jane Doe")
     private String nome;
 
     @NotNull
@@ -34,6 +27,7 @@ public class UsuarioCreateDTO {
     private String cpf;
 
     @NotBlank
+    @Email
     @Size(min = 12)
     @Schema(description = "Email válido", required = true, example = "mail@mail.com")
     private String email;
@@ -43,11 +37,4 @@ public class UsuarioCreateDTO {
     @Schema(description = "Senha de acesso", required = true, example = "senha123")
     private String senha;
 
-    @NotNull
-    private Integer tipoCargo;
-
-    @NotNull
-    @Size(min = 2, max = 255)
-    @Schema(description = "Usuario", required = true, example = "Monkey")
-    private String login;
 }
