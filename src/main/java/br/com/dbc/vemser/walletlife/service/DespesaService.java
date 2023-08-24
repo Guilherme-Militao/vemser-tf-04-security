@@ -51,11 +51,14 @@ public class DespesaService {
                 throw new RegraDeNegocioException("Despesa não encontrada");
             }
             DespesaEntity despesaEntityDados = objectMapper.convertValue(despesa, DespesaEntity.class);
-            DespesaEntity despesaEntityExiste = despesaExiteOp.get();
+            DespesaEntity despesaEntityExiste = objectMapper.convertValue(despesaExiteOp, DespesaEntity.class);
 
-            BeanUtils.copyProperties(despesaEntityDados, despesaEntityExiste, "idDespesa");
+//            BeanUtils.copyProperties(despesaEntityDados, despesaEntityExiste, "idDespesa");
 
-            DespesaEntity despesaEntityAtualizada = despesaRepository.save(despesaEntityExiste);
+            despesaEntityDados.setIdDespesa(despesaEntityExiste.getIdDespesa());
+            despesaEntityDados.setUsuarioEntity(despesaEntityExiste.getUsuarioEntity());
+
+            DespesaEntity despesaEntityAtualizada = despesaRepository.save(despesaEntityDados);
             DespesaDTO despesaDTO = objectMapper.convertValue(despesaEntityAtualizada,DespesaDTO.class);
 
             return despesaDTO;
