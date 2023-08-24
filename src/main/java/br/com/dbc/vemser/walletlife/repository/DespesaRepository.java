@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface DespesaRepository extends JpaRepository<DespesaEntity,Integer> {
@@ -14,5 +15,4 @@ public interface DespesaRepository extends JpaRepository<DespesaEntity,Integer> 
 
     @Query(nativeQuery = true,value = "SELECT * FROM DESPESA WHERE ID_USUARIO = :idUsuario")
     List<DespesaEntity> listDespesaListByIdUsuario(Integer idUsuario);
-
 }
