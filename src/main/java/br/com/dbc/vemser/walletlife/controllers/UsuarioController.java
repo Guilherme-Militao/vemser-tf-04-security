@@ -76,7 +76,7 @@ public class UsuarioController implements UsuarioControllerDoc {
 
     @PutMapping("/{idUsuario}")
     public ResponseEntity<UsuarioDTO> update(@PathVariable @Positive Integer idUsuario,
-                                             @RequestBody @Valid UsuarioCreateDTO usuario) {
+                                             @RequestBody @Valid UsuarioCreateDTO usuario)throws Exception{
         log.info("Usuário: editar");
         UsuarioDTO usuarioAtualizado = usuarioService.update(idUsuario, usuario);
         return new ResponseEntity<>(usuarioAtualizado, HttpStatus.OK);
