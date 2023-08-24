@@ -24,7 +24,7 @@ public interface InvestimentoControllerDoc {
             }
     )
     @GetMapping
-    public ResponseEntity<List<InvestimentoDTO>> findAll();
+    ResponseEntity<List<InvestimentoDTO>> findAll();
 
     @Operation(summary = "Buscar Investimento por ID", description = "Busca no banco o investimento a partir de um ID")
     @ApiResponses(
@@ -35,7 +35,7 @@ public interface InvestimentoControllerDoc {
             }
     )
     @GetMapping("/{idInvestimento}")
-    public ResponseEntity<InvestimentoDTO> findById(@PathVariable("idInvestimento") @Positive Integer id) throws RegraDeNegocioException;
+    ResponseEntity<InvestimentoDTO> findById(@PathVariable("idInvestimento") @Positive Integer id) throws RegraDeNegocioException;
 
     @Operation(summary = "Listar Investimentos por ID de Usuário", description = "Lista todos os investimentos de um usuário a partir de um ID de usuário")
     @ApiResponses(
@@ -46,7 +46,7 @@ public interface InvestimentoControllerDoc {
             }
     )
     @GetMapping("/usuario/{idUsuario}")
-    public ResponseEntity<List<InvestimentoDTO>> findByUsuario(@PathVariable("idUsuario") @Positive Integer id) throws RegraDeNegocioException;
+    ResponseEntity<List<InvestimentoDTO>> findByUsuario(@PathVariable("idUsuario") @Positive Integer id) throws RegraDeNegocioException;
 
     @Operation(summary = "Adicionar Investimento", description = "Adiciona um novo investimento no banco")
     @ApiResponses(
@@ -56,8 +56,8 @@ public interface InvestimentoControllerDoc {
                     @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
             }
     )
-    @PostMapping
-    public ResponseEntity<InvestimentoDTO> create(@RequestBody @Valid InvestimentoCreateDTO investimento, @PathVariable("idUsuario") @Positive Integer id) throws RegraDeNegocioException;
+    @PostMapping("/criar-investimento")
+    ResponseEntity<InvestimentoDTO> create(@RequestBody @Valid InvestimentoCreateDTO investimento);
 
     @Operation(summary = "Atualizar Investimento por ID", description = "Busca no banco o investimento a partir de um ID e o atualiza")
     @ApiResponses(
