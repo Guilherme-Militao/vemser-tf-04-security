@@ -56,6 +56,7 @@ public class SecurityConfiguration {
                         .antMatchers(HttpMethod.PUT, "/despesa/{idDespesa:[0-9]+}").hasAnyRole("ADMIN", "USUARIO")
                         .antMatchers(HttpMethod.DELETE, "/despesa/{idDespesa:[0-9]+}").hasAnyRole("ADMIN", "USUARIO")
                         .antMatchers("/usuario/**").hasRole("ADMIN")
+                        .antMatchers("/investimentos/**").hasRole("ADMIN")
                         .antMatchers("/receita/**").hasRole("ADMIN")
                         .antMatchers("/despesa/**").hasRole("ADMIN")
                         .anyRequest().denyAll()
