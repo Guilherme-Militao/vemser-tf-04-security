@@ -82,17 +82,17 @@ public class UsuarioController implements UsuarioControllerDoc {
         return new ResponseEntity<>(usuarioAtualizado, HttpStatus.OK);
     }
 
+    @PutMapping("/{idUsuario}/login")
+    public ResponseEntity<UsuarioDTO> updateLogin(@PathVariable Integer idUsuario, @RequestBody @Valid UsuarioSenhaDTO usuarioSenhaDTO) throws RegraDeNegocioException{
+        log.info("Usuário: inserir novo");
+        return new ResponseEntity<>(usuarioService.updateSenha(idUsuario,usuarioSenhaDTO), HttpStatus.OK);
+    }
+
     @DeleteMapping("/{idUsuario}")
     public ResponseEntity<Void> remove(@PathVariable("idUsuario") Integer idUsuario) {
         log.info("Usuário: deletar por id");
         usuarioService.remove(idUsuario);
         return ResponseEntity.ok().build();
-    }
-
-    @PutMapping("/{idUsuario}/login")
-    public ResponseEntity<UsuarioDTO> updateLogin(@PathVariable Integer idUsuario, @RequestBody @Valid UsuarioSenhaDTO usuarioSenhaDTO) throws RegraDeNegocioException{
-        log.info("Usuário: inserir novo");
-        return new ResponseEntity<>(usuarioService.updateSenha(idUsuario,usuarioSenhaDTO), HttpStatus.OK);
     }
 
 }

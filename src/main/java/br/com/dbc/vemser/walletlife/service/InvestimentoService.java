@@ -23,17 +23,29 @@ public class InvestimentoService {
     private UsuarioService usuarioService;
     private final ObjectMapper objectMapper;
 
-    public InvestimentoDTO create(InvestimentoCreateDTO investimento,  Integer idUsuario) throws RegraDeNegocioException {
-        UsuarioDTO usuarioById = usuarioService.findByUsuarioEntity(idUsuario);
-        if (usuarioById != null) {
-            UsuarioEntity usuarioEntityConvertido = objectMapper.convertValue(usuarioById, UsuarioEntity.class);
-            InvestimentoEntity entity = objectMapper.convertValue(investimento, InvestimentoEntity.class);
-            entity.setUsuarioEntity(usuarioEntityConvertido);
-            InvestimentoEntity investimentoEntityConvertido = investimentoRepository.save(entity);
-            return convertToDTO(investimentoEntityConvertido);
-        } else {
-            throw new RegraDeNegocioException("Usuário não encontrado");
-        }
+//    public InvestimentoDTO create(InvestimentoCreateDTO investimento,  Integer idUsuario) throws RegraDeNegocioException {
+//        UsuarioDTO usuarioById = usuarioService.findByUsuarioEntity(idUsuario);
+//        if (usuarioById != null) {
+//            UsuarioEntity usuarioEntityConvertido = objectMapper.convertValue(usuarioById, UsuarioEntity.class);
+//            InvestimentoEntity entity = objectMapper.convertValue(investimento, InvestimentoEntity.class);
+//            entity.setUsuarioEntity(usuarioEntityConvertido);
+//            InvestimentoEntity investimentoEntityConvertido = investimentoRepository.save(entity);
+//            return convertToDTO(investimentoEntityConvertido);
+//        } else {
+//            throw new RegraDeNegocioException("Usuário não encontrado");
+//        }
+//    }
+
+    public InvestimentoDTO create(InvestimentoCreateDTO investimento) {
+        UsuarioDTO usuarioById = usuarioService.findByUsuarioEntity(usuarioService.getIdLoggedUser());
+        UsuarioEntity usuario = objectMapper.convertValue(usuarioById, UsuarioEntity.class);
+
+        InvestimentoEntity novoInvestimento = objectMapper.convertValue(investimento, InvestimentoEntity.class);
+        novoInvestimento.setUsuarioEntity(usuario);
+
+        InvestimentoEntity investimentoEntityConvertido = investimentoRepository.save(novoInvestimento);
+
+        return convertToDTO(investimentoEntityConvertido);
     }
 
     public void remove(Integer id) {
