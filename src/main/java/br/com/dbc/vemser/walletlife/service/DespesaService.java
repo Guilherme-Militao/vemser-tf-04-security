@@ -53,7 +53,7 @@ public class DespesaService {
         despesaEntity.setValor(despesa.getValor());
         despesaEntity.setDescricao(despesa.getDescricao());
         despesaEntity.setDataPagamento(despesa.getDataPagamento());
-        despesaEntity.setUsuarioEntity(usuarioService.findById(usuarioService.getIdLoggedUser()));
+
 
 
         return convertToDTO(despesaRepository.save(despesaEntity));
