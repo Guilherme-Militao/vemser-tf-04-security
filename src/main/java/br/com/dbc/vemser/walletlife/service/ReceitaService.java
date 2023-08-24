@@ -9,14 +9,12 @@ import br.com.dbc.vemser.walletlife.entity.UsuarioEntity;
 import br.com.dbc.vemser.walletlife.repository.ReceitaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
-import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,8 +26,8 @@ public class ReceitaService {
     private final UsuarioService usuarioService;
 
 
-    public ReceitaDTO create(ReceitaCreateDTO receita, Integer idUsuario) {
-        UsuarioDTO usuarioById = usuarioService.findByUsuarioEntity(idUsuario);
+    public ReceitaDTO create(ReceitaCreateDTO receita) {
+        UsuarioDTO usuarioById = usuarioService.findByUsuarioEntity(usuarioService.getIdLoggedUser());
         try{
        if (usuarioById == null) {
            throw new RegraDeNegocioException("Usuário não encontrado");
@@ -49,23 +47,34 @@ public class ReceitaService {
         receitaRepository.delete(receitaEntity);
     }
 
-    public ReceitaDTO update(Integer id, ReceitaDTO receita) {
-        try {
-            Optional<ReceitaEntity> receitaExisteOp = receitaRepository.findById(id);
-            if (receitaExisteOp.isEmpty()) {
-                throw new RegraDeNegocioException("Receita não encontrada");
-            }
-            ReceitaEntity receitaEntityDados = objectMapper.convertValue(receita, ReceitaEntity.class);
-            ReceitaEntity receitaEntityExiste = receitaExisteOp.get();
+    public ReceitaDTO update(Integer idReceita, ReceitaCreateDTO receita) throws RegraDeNegocioException {
+//        try {
+//            Optional<ReceitaEntity> receitaExisteOp = receitaRepository.findById(id);
+//            if (receitaExisteOp.isEmpty()) {
+//                throw new RegraDeNegocioException("Receita não encontrada");
+//            }
+//            ReceitaEntity receitaEntityDados = objectMapper.convertValue(receita, ReceitaEntity.class);
+//            ReceitaEntity receitaEntityExiste = receitaExisteOp.get();
+//
+//            BeanUtils.copyProperties(receitaEntityDados, receitaEntityExiste, "id", "usuario");
+//
+//            ReceitaEntity receitaEntityAtualizada = receitaRepository.save(receitaEntityExiste);
+//
+//            return convertToDTO(receitaEntityAtualizada);
+//        } catch (RegraDeNegocioException e) {
+//            throw new RuntimeException(e);
+//        }
 
-            BeanUtils.copyProperties(receitaEntityDados, receitaEntityExiste, "id", "usuario");
+        ReceitaEntity receitaEntity = returnReceitaEntityById(idReceita);
 
-            ReceitaEntity receitaEntityAtualizada = receitaRepository.save(receitaEntityExiste);
+        receitaEntity.setValor(receita.getValor());
+        receitaEntity.setDescricao(receita.getDescricao());
+        receitaEntity.setBanco(receita.getBanco());
+        receitaEntity.setEmpresa(receita.getEmpresa());
+        //receitaEntity.setUsuarioEntity(usuarioService.findById(usuarioService.getIdLoggedUser()));
 
-            return convertToDTO(receitaEntityAtualizada);
-        } catch (RegraDeNegocioException e) {
-            throw new RuntimeException(e);
-        }
+        return convertToDTO(receitaRepository.save(receitaEntity));
+
     }
 
     public List<ReceitaDTO> findAll(Integer pagina, Integer quantidadeRegistros) {
