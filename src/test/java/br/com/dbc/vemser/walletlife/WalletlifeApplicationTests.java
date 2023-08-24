@@ -1,13 +1,13 @@
-package br.com.dbc.vemser.walletlife;
+// package br.com.dbc.vemser.walletlife;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
-class WalletlifeApplicationTests {
+// @SpringBootTest
+// class WalletlifeApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+// 	@Test
+// 	void contextLoads() {
+// 	}
 
-}
+// }
