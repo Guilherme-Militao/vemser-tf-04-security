@@ -43,8 +43,8 @@ public class InvestimentoController implements InvestimentoControllerDoc {
     }
 
     @PostMapping("/criar-investimento")
-    public ResponseEntity<InvestimentoDTO> create(@RequestBody @Valid InvestimentoCreateDTO investimento, @PathVariable("idUsuario") @Positive Integer id) throws RegraDeNegocioException {
-        InvestimentoDTO novoInvestimento = investimentoService.create(investimento, id);
+    public ResponseEntity<InvestimentoDTO> create(@RequestBody @Valid InvestimentoCreateDTO investimento) {
+        InvestimentoDTO novoInvestimento = investimentoService.create(investimento);
         return ResponseEntity.status(HttpStatus.OK).body(novoInvestimento);
     }
 
