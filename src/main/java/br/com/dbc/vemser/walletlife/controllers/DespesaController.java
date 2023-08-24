@@ -22,7 +22,7 @@ import java.util.List;
 @RequestMapping("/despesa")
 @Slf4j
 @Data
-public class DespesaController implements DespesaControllerDoc {
+public class DespesaController{
 
     private final DespesaService despesaService;
 
@@ -41,9 +41,9 @@ public class DespesaController implements DespesaControllerDoc {
         return new ResponseEntity<>(despesaService.listarDespesaByIdUsuario(id), HttpStatus.OK);
     }
 
-    @PostMapping("/{idUsuario}")
-    public ResponseEntity<DespesaDTO> adicionarDespesa(@PathVariable("idUsuario") Integer idUsuario,@Valid @RequestBody DespesaCreateDTO despesa) throws RegraDeNegocioException {
-        return new ResponseEntity<>(despesaService.adicionarDespesa(despesa,idUsuario), HttpStatus.OK);
+    @PostMapping("/criar-despesa")
+    public ResponseEntity<DespesaDTO> adicionarDespesa(@Valid @RequestBody DespesaCreateDTO despesa) throws RegraDeNegocioException {
+        return new ResponseEntity<>(despesaService.adicionarDespesa(despesa), HttpStatus.OK);
     }
 
     @PutMapping("/{idDespesa}")
