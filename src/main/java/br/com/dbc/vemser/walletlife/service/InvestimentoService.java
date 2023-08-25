@@ -5,6 +5,7 @@ import br.com.dbc.vemser.walletlife.dto.InvestimentoDTO;
 import br.com.dbc.vemser.walletlife.dto.ReceitaDTO;
 import br.com.dbc.vemser.walletlife.dto.UsuarioDTO;
 import br.com.dbc.vemser.walletlife.entity.InvestimentoEntity;
+import br.com.dbc.vemser.walletlife.entity.ReceitaEntity;
 import br.com.dbc.vemser.walletlife.exceptions.RegraDeNegocioException;
 import br.com.dbc.vemser.walletlife.entity.UsuarioEntity;
 import br.com.dbc.vemser.walletlife.repository.InvestimentoRepository;
@@ -76,14 +77,20 @@ public class InvestimentoService {
     }
 
     public InvestimentoDTO findById(Integer idInvestimento) throws RegraDeNegocioException {
-        Optional<InvestimentoEntity> investimento = investimentoRepository.findById(idInvestimento);
-        if (investimento.isEmpty()){
-            throw new RegraDeNegocioException("Investimento não encontrado");
+        //valida se a receita exite no banco de dados
+        Optional<InvestimentoEntity> receitaBuscada = investimentoRepository.findById(idInvestimento);
+        if (receitaBuscada.isEmpty()) {
+            throw new RegraDeNegocioException("Receita não encontrada!");
         }
-        InvestimentoEntity investimentoEntityExistente = investimento.get();
-        InvestimentoDTO investimentoDTO = convertToDTO(investimentoEntityExistente);
 
-        return investimentoDTO;
+        //valida se a receita a ser atualizada é do usuário logado
+        Integer userId = usuarioService.getIdLoggedUser();
+        InvestimentoEntity receitaEntity = receitaBuscada.get();
+        if (!receitaEntity.getUsuarioEntity().getIdUsuario().equals(userId)) {
+            throw new RegraDeNegocioException("ID de receita inválido.");
+        }
+
+        return convertToDTO(receitaEntity);
     }
 
     public List<InvestimentoDTO> findAll() {
