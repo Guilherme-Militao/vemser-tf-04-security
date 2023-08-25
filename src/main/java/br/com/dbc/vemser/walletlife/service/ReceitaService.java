@@ -47,23 +47,7 @@ public class ReceitaService {
         receitaRepository.delete(receitaEntity);
     }
 
-    public ReceitaDTO update(Integer idReceita, ReceitaCreateDTO receita) throws RegraDeNegocioException {
-//        try {
-//            Optional<ReceitaEntity> receitaExisteOp = receitaRepository.findById(id);
-//            if (receitaExisteOp.isEmpty()) {
-//                throw new RegraDeNegocioException("Receita não encontrada");
-//            }
-//            ReceitaEntity receitaEntityDados = objectMapper.convertValue(receita, ReceitaEntity.class);
-//            ReceitaEntity receitaEntityExiste = receitaExisteOp.get();
-//
-//            BeanUtils.copyProperties(receitaEntityDados, receitaEntityExiste, "id", "usuario");
-//
-//            ReceitaEntity receitaEntityAtualizada = receitaRepository.save(receitaEntityExiste);
-//
-//            return convertToDTO(receitaEntityAtualizada);
-//        } catch (RegraDeNegocioException e) {
-//            throw new RuntimeException(e);
-//        }
+    public ReceitaDTO update(Integer idReceita, ReceitaCreateDTO receita) {
 
         ReceitaEntity receitaEntity = returnReceitaEntityById(idReceita);
 
@@ -71,11 +55,18 @@ public class ReceitaService {
         receitaEntity.setDescricao(receita.getDescricao());
         receitaEntity.setBanco(receita.getBanco());
         receitaEntity.setEmpresa(receita.getEmpresa());
-        //receitaEntity.setUsuarioEntity(usuarioService.findById(usuarioService.getIdLoggedUser()));
 
         return convertToDTO(receitaRepository.save(receitaEntity));
 
     }
+
+
+    public Double valorTotal(){
+        return findByUsuario(usuarioService.getIdLoggedUser()).stream()
+                .mapToDouble(ReceitaDTO::getValor)
+                .sum();
+    }
+
 
     public List<ReceitaDTO> findAll(Integer pagina, Integer quantidadeRegistros) {
         Pageable pageable = PageRequest.of(pagina, quantidadeRegistros);
