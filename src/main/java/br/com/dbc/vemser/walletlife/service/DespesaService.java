@@ -38,14 +38,32 @@ public class DespesaService {
     }
 
     // remoção
-    public void removerDespesa(Integer idDespesa) {
-        despesaRepository.deleteById(idDespesa);
+    public void removerDespesa(Integer id) throws RegraDeNegocioException {
+        Optional<DespesaEntity> despesaBuscada = despesaRepository.findById(id);
+        if (despesaBuscada.isEmpty()) {
+            throw new RegraDeNegocioException("Investimento não encontrado!");
+        }
+
+        Integer userId = usuarioService.getIdLoggedUser();
+        DespesaEntity despesaEntity = despesaBuscada.get();
+        if (!despesaEntity.getUsuarioEntity().getIdUsuario().equals(userId)) {
+            throw new RegraDeNegocioException("ID de investimento inválido.");
+        }
+        despesaRepository.deleteById(id);
     }
 
     // atualização de um objeto
     public DespesaDTO editarDespesa(Integer id, DespesaCreateDTO despesa) throws RegraDeNegocioException {
-        DespesaEntity despesaEntity = despesaRepository.findById(id)
-                .orElseThrow(()-> new RegraDeNegocioException("Usuario não encontrado"));
+        Optional<DespesaEntity> despesaBuscada = despesaRepository.findById(id);
+        if (despesaBuscada.isEmpty()) {
+            throw new RegraDeNegocioException("Investimento não encontrado!");
+        }
+
+        Integer userId = usuarioService.getIdLoggedUser();
+        DespesaEntity despesaEntity = despesaBuscada.get();
+        if (!despesaEntity.getUsuarioEntity().getIdUsuario().equals(userId)) {
+            throw new RegraDeNegocioException("ID de investimento inválido.");
+        }
 
         despesaEntity.setTipo(despesa.getTipo());
         despesaEntity.setDescricao(despesa.getDescricao());
@@ -56,6 +74,12 @@ public class DespesaService {
 
 
         return convertToDTO(despesaRepository.save(despesaEntity));
+    }
+
+    public Double valorTotal() throws RegraDeNegocioException {
+        return listarDespesaByIdUsuario(usuarioService.getIdLoggedUser()).stream()
+                .mapToDouble(DespesaDTO::getValor)
+                .sum();
     }
 
     // leitura
