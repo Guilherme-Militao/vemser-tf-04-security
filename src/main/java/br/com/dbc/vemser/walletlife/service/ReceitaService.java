@@ -96,6 +96,12 @@ public class ReceitaService {
     }
 
 
+    public Long totalRegistros(){
+        return findByUsuario(usuarioService.getIdLoggedUser()).stream()
+                .count();
+    }
+
+
     public List<ReceitaDTO> findAll(Integer pagina, Integer quantidadeRegistros) {
         Pageable pageable = PageRequest.of(pagina, quantidadeRegistros);
         Page<ReceitaEntity> receitas = receitaRepository.findAll(pageable);
