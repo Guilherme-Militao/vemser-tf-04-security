@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,21 +43,48 @@ public class ReceitaService {
         }
     }
 
-    public void remove(Integer idReceita) {
-        ReceitaEntity receitaEntity = returnReceitaEntityById(idReceita);
-        receitaRepository.delete(receitaEntity);
+    public void remove(Integer idReceita) throws RegraDeNegocioException {
+
+        //valida se a receita exite no banco de dados
+        Optional<ReceitaEntity> receitaBuscada = receitaRepository.findById(idReceita);
+        if (receitaBuscada.isEmpty()) {
+            throw new RegraDeNegocioException("Receita não encontrada!");
+        }
+
+        //valida se a receita a ser atualizada é do usuário logado
+        Integer userId = usuarioService.getIdLoggedUser();
+        ReceitaEntity receitaEntity = receitaBuscada.get();
+        if (!receitaEntity.getUsuarioEntity().getIdUsuario().equals(userId)) {
+            throw new RegraDeNegocioException("ID de receita inválido.");
+        }
+
+        ReceitaEntity receitaEntity2 = returnReceitaEntityById(idReceita);
+        receitaRepository.delete(receitaEntity2);
     }
 
-    public ReceitaDTO update(Integer idReceita, ReceitaCreateDTO receita) {
+    public ReceitaDTO update(Integer idReceita, ReceitaCreateDTO receita) throws RegraDeNegocioException {
 
-        ReceitaEntity receitaEntity = returnReceitaEntityById(idReceita);
+        //valida se a receita exite no banco de dados
+        Optional<ReceitaEntity> receitaBuscada = receitaRepository.findById(idReceita);
+        if (receitaBuscada.isEmpty()) {
+            throw new RegraDeNegocioException("Receita não encontrada!");
+        }
 
-        receitaEntity.setValor(receita.getValor());
-        receitaEntity.setDescricao(receita.getDescricao());
-        receitaEntity.setBanco(receita.getBanco());
-        receitaEntity.setEmpresa(receita.getEmpresa());
+        //valida se a receita a ser atualizada é do usuário logado
+        Integer userId = usuarioService.getIdLoggedUser();
+        ReceitaEntity receitaEntity = receitaBuscada.get();
+        if (!receitaEntity.getUsuarioEntity().getIdUsuario().equals(userId)) {
+            throw new RegraDeNegocioException("ID de receita inválido.");
+        }
 
-        return convertToDTO(receitaRepository.save(receitaEntity));
+        ReceitaEntity receitaEntity2 = returnReceitaEntityById(idReceita);
+
+        receitaEntity2.setValor(receita.getValor());
+        receitaEntity2.setDescricao(receita.getDescricao());
+        receitaEntity2.setBanco(receita.getBanco());
+        receitaEntity2.setEmpresa(receita.getEmpresa());
+
+        return convertToDTO(receitaRepository.save(receitaEntity2));
 
     }
 
@@ -90,8 +118,22 @@ public class ReceitaService {
         }
     }
 
-    public ReceitaDTO findById(Integer id) {
-        return convertToDTO(returnReceitaEntityById(id));
+    public ReceitaDTO findById(Integer idReceita) throws RegraDeNegocioException {
+
+        //valida se a receita exite no banco de dados
+        Optional<ReceitaEntity> receitaBuscada = receitaRepository.findById(idReceita);
+        if (receitaBuscada.isEmpty()) {
+            throw new RegraDeNegocioException("Receita não encontrada!");
+        }
+
+        //valida se a receita a ser atualizada é do usuário logado
+        Integer userId = usuarioService.getIdLoggedUser();
+        ReceitaEntity receitaEntity = receitaBuscada.get();
+        if (!receitaEntity.getUsuarioEntity().getIdUsuario().equals(userId)) {
+            throw new RegraDeNegocioException("ID de receita inválido.");
+        }
+
+        return convertToDTO(returnReceitaEntityById(idReceita));
     }
 
     public ReceitaEntity returnReceitaEntityById(Integer id) {

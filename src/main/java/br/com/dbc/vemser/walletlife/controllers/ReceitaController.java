@@ -28,7 +28,7 @@ public class ReceitaController implements ReceitaControllerDoc {
     }
 
     @GetMapping("/{idReceita}")
-    public ResponseEntity<ReceitaDTO> findById(@PathVariable("idReceita") @Positive Integer id){
+    public ResponseEntity<ReceitaDTO> findById(@PathVariable("idReceita") @Positive Integer id) throws RegraDeNegocioException{
         return new ResponseEntity<>(receitaService.findById(id), HttpStatus.OK);
     }
 
@@ -54,7 +54,7 @@ public class ReceitaController implements ReceitaControllerDoc {
     }
 
     @DeleteMapping("/{idReceita}")
-    public ResponseEntity<Void> remove(@PathVariable("idReceita") Integer id) {
+    public ResponseEntity<Void> remove(@PathVariable("idReceita") Integer id) throws RegraDeNegocioException {
         receitaService.remove(id);
         return ResponseEntity.ok().build();
     }
