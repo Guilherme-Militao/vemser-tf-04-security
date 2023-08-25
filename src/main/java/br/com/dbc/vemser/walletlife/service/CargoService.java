@@ -3,7 +3,6 @@ package br.com.dbc.vemser.walletlife.service;
 import br.com.dbc.vemser.walletlife.entity.CargoEntity;
 import br.com.dbc.vemser.walletlife.exceptions.RegraDeNegocioException;
 import br.com.dbc.vemser.walletlife.repository.CargoRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
