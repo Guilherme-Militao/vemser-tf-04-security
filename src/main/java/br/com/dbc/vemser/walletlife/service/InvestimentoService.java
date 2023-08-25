@@ -5,6 +5,7 @@ import br.com.dbc.vemser.walletlife.dto.InvestimentoDTO;
 import br.com.dbc.vemser.walletlife.dto.ReceitaDTO;
 import br.com.dbc.vemser.walletlife.dto.UsuarioDTO;
 import br.com.dbc.vemser.walletlife.entity.InvestimentoEntity;
+import br.com.dbc.vemser.walletlife.entity.ReceitaEntity;
 import br.com.dbc.vemser.walletlife.exceptions.RegraDeNegocioException;
 import br.com.dbc.vemser.walletlife.entity.UsuarioEntity;
 import br.com.dbc.vemser.walletlife.repository.InvestimentoRepository;
@@ -76,14 +77,20 @@ public class InvestimentoService {
     }
 
     public InvestimentoDTO findById(Integer idInvestimento) throws RegraDeNegocioException {
-        Optional<InvestimentoEntity> investimento = investimentoRepository.findById(idInvestimento);
-        if (investimento.isEmpty()){
-            throw new RegraDeNegocioException("Investimento não encontrado");
+        //valida se o investimento exite no banco de dados
+        Optional<InvestimentoEntity> investimentoBuscado = investimentoRepository.findById(idInvestimento);
+        if (investimentoBuscado.isEmpty()) {
+            throw new RegraDeNegocioException("Investimento não encontrado!");
         }
-        InvestimentoEntity investimentoEntityExistente = investimento.get();
-        InvestimentoDTO investimentoDTO = convertToDTO(investimentoEntityExistente);
 
-        return investimentoDTO;
+        //valida se o investimento a ser atualizado é do usuário logado
+        Integer userId = usuarioService.getIdLoggedUser();
+        InvestimentoEntity investimentoEntity = investimentoBuscado.get();
+        if (!investimentoEntity.getUsuarioEntity().getIdUsuario().equals(userId)) {
+            throw new RegraDeNegocioException("ID de investimento inválido.");
+        }
+
+        return convertToDTO(investimentoEntity);
     }
 
     public List<InvestimentoDTO> findAll() {
@@ -124,5 +131,10 @@ public class InvestimentoService {
         return findByUsuario(usuarioService.getIdLoggedUser()).stream()
                 .mapToDouble(InvestimentoDTO::getValor)
                 .sum();
+    }
+
+    public Long totalRegistros() throws RegraDeNegocioException {
+        return findByUsuario(usuarioService.getIdLoggedUser()).stream()
+                .count();
     }
 }
