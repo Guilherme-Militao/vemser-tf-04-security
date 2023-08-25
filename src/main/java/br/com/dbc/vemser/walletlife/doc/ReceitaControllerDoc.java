@@ -34,7 +34,7 @@ public interface ReceitaControllerDoc {
             }
     )
     @GetMapping("/{idReceita}")
-    public ResponseEntity<ReceitaDTO> findById(@PathVariable("idReceita") @Positive Integer id);
+    public ResponseEntity<ReceitaDTO> findById(@PathVariable("idReceita") @Positive Integer id)  throws RegraDeNegocioException;
 
     @Operation(summary = "Listar receitas de um usuário", description = "Busca no banco as receitas de um usuário utilizando o ID do usuário")
     @ApiResponses(
@@ -80,5 +80,5 @@ public interface ReceitaControllerDoc {
             }
     )
     @DeleteMapping("/{idReceita}")
-    public ResponseEntity<Void> remove(@PathVariable("idReceita") Integer id);
+    public ResponseEntity<Void> remove(@PathVariable("idReceita") Integer id) throws RegraDeNegocioException;
 }
