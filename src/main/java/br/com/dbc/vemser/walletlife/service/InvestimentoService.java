@@ -2,6 +2,7 @@ package br.com.dbc.vemser.walletlife.service;
 
 import br.com.dbc.vemser.walletlife.dto.InvestimentoCreateDTO;
 import br.com.dbc.vemser.walletlife.dto.InvestimentoDTO;
+import br.com.dbc.vemser.walletlife.dto.ReceitaDTO;
 import br.com.dbc.vemser.walletlife.dto.UsuarioDTO;
 import br.com.dbc.vemser.walletlife.entity.InvestimentoEntity;
 import br.com.dbc.vemser.walletlife.exceptions.RegraDeNegocioException;
@@ -23,41 +24,55 @@ public class InvestimentoService {
     private UsuarioService usuarioService;
     private final ObjectMapper objectMapper;
 
-    public InvestimentoDTO create(InvestimentoCreateDTO investimento,  Integer idUsuario) throws RegraDeNegocioException {
-        UsuarioDTO usuarioById = usuarioService.findByUsuarioEntity(idUsuario);
-        if (usuarioById != null) {
-            UsuarioEntity usuarioEntityConvertido = objectMapper.convertValue(usuarioById, UsuarioEntity.class);
-            InvestimentoEntity entity = objectMapper.convertValue(investimento, InvestimentoEntity.class);
-            entity.setUsuarioEntity(usuarioEntityConvertido);
-            InvestimentoEntity investimentoEntityConvertido = investimentoRepository.save(entity);
-            return convertToDTO(investimentoEntityConvertido);
-        } else {
-            throw new RegraDeNegocioException("Usuário não encontrado");
-        }
+    public InvestimentoDTO create(InvestimentoCreateDTO investimento) {
+        UsuarioDTO usuarioById = usuarioService.findByUsuarioEntity(usuarioService.getIdLoggedUser());
+        UsuarioEntity usuario = objectMapper.convertValue(usuarioById, UsuarioEntity.class);
+
+        InvestimentoEntity novoInvestimento = objectMapper.convertValue(investimento, InvestimentoEntity.class);
+        novoInvestimento.setUsuarioEntity(usuario);
+
+        InvestimentoEntity investimentoEntityConvertido = investimentoRepository.save(novoInvestimento);
+
+        return convertToDTO(investimentoEntityConvertido);
     }
 
-    public void remove(Integer id) {
+    public void remove(Integer id) throws RegraDeNegocioException {
+        Optional<InvestimentoEntity> investimentoBuscado = investimentoRepository.findById(id);
+        if (investimentoBuscado.isEmpty()) {
+            throw new RegraDeNegocioException("Investimento não encontrado!");
+        }
+
+        Integer userId = usuarioService.getIdLoggedUser();
+        InvestimentoEntity investimentoEntity = investimentoBuscado.get();
+        if (!investimentoEntity.getUsuarioEntity().getIdUsuario().equals(userId)) {
+            throw new RegraDeNegocioException("ID de investimento inválido.");
+        }
+
         investimentoRepository.deleteById(id);
     }
 
-    public InvestimentoDTO update(Integer id, InvestimentoCreateDTO investimento) throws RegraDeNegocioException  {
-        try {
-            Optional<InvestimentoEntity> investimentoRecuperado = investimentoRepository.findById(id);
-            if (investimentoRecuperado.isEmpty()) {
-                throw new RegraDeNegocioException("Investimento não encontrado");
-            }
-            InvestimentoEntity investimentoEntityDados = objectMapper.convertValue(investimento, InvestimentoEntity.class);
-            InvestimentoEntity investimentoEntityExiste = investimentoRecuperado.get();
-
-            BeanUtils.copyProperties(investimentoEntityDados, investimentoEntityExiste, "idInvestimento", "usuario");
-
-            InvestimentoEntity investimentoEntityAtualizado = investimentoRepository.save(investimentoEntityExiste);
-            InvestimentoDTO investimentoDTO = objectMapper.convertValue(investimentoEntityAtualizado, InvestimentoDTO.class);
-
-            return investimentoDTO;
-        } catch (RegraDeNegocioException e) {
-            throw new RuntimeException(e);
+    public InvestimentoDTO update(Integer id, InvestimentoCreateDTO investimento) throws RegraDeNegocioException {
+        Optional<InvestimentoEntity> investimentoBuscado = investimentoRepository.findById(id);
+        if (investimentoBuscado.isEmpty()) {
+            throw new RegraDeNegocioException("Investimento não encontrado!");
         }
+
+        Integer userId = usuarioService.getIdLoggedUser();
+        InvestimentoEntity investimentoEntity = investimentoBuscado.get();
+        if (!investimentoEntity.getUsuarioEntity().getIdUsuario().equals(userId)) {
+            throw new RegraDeNegocioException("ID de investimento inválido.");
+        }
+
+        InvestimentoEntity investimentoDados = objectMapper.convertValue(investimento, InvestimentoEntity.class);
+        investimentoEntity.setTipo(investimentoDados.getTipo());
+        investimentoEntity.setValor(investimentoDados.getValor());
+        investimentoEntity.setDescricao(investimentoDados.getDescricao());
+        investimentoEntity.setCorretora(investimentoDados.getCorretora());
+        investimentoEntity.setDataInicio(investimentoDados.getDataInicio());
+
+        InvestimentoEntity investimentoAtualizado = investimentoRepository.save(investimentoEntity);
+
+        return convertToDTO(investimentoAtualizado);
     }
 
     public InvestimentoDTO findById(Integer idInvestimento) throws RegraDeNegocioException {
@@ -103,5 +118,11 @@ public class InvestimentoService {
         return investimentoEntities.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
+    }
+
+    public Double valorTotal() throws RegraDeNegocioException {
+        return findByUsuario(usuarioService.getIdLoggedUser()).stream()
+                .mapToDouble(InvestimentoDTO::getValor)
+                .sum();
     }
 }

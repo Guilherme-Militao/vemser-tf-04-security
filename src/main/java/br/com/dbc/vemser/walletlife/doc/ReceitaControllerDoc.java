@@ -2,6 +2,7 @@ package br.com.dbc.vemser.walletlife.doc;
 
 import br.com.dbc.vemser.walletlife.dto.ReceitaCreateDTO;
 import br.com.dbc.vemser.walletlife.dto.ReceitaDTO;
+import br.com.dbc.vemser.walletlife.exceptions.RegraDeNegocioException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -33,7 +34,7 @@ public interface ReceitaControllerDoc {
             }
     )
     @GetMapping("/{idReceita}")
-    public ResponseEntity<ReceitaDTO> findById(@PathVariable("idReceita") @Positive Integer id);
+    public ResponseEntity<ReceitaDTO> findById(@PathVariable("idReceita") @Positive Integer id)  throws RegraDeNegocioException;
 
     @Operation(summary = "Listar receitas de um usuário", description = "Busca no banco as receitas de um usuário utilizando o ID do usuário")
     @ApiResponses(
@@ -54,8 +55,8 @@ public interface ReceitaControllerDoc {
                     @ApiResponse(responseCode = "500", description = "Foi gerada uma exceção")
             }
     )
-    @PostMapping("/{idUsuario}")
-    public ResponseEntity<ReceitaDTO> create(@PathVariable("idUsuario") Integer idUsuario, @Valid @RequestBody ReceitaCreateDTO receita);
+    @PostMapping("/criar-receita")
+    public ResponseEntity<ReceitaDTO> create(@Valid @RequestBody ReceitaCreateDTO receita);
 
 
     @Operation(summary = "Atualiza uma receita por ID", description = "Busca no banco a receita a partir de um ID e a atualiza")
@@ -68,7 +69,7 @@ public interface ReceitaControllerDoc {
     )
     @PutMapping("/{idReceita}")
     public ResponseEntity<ReceitaDTO> update(@PathVariable("idReceita") Integer id,
-                                             @Valid @RequestBody ReceitaDTO receitaAtualizar);
+                                             @Valid @RequestBody ReceitaCreateDTO receitaAtualizar) throws RegraDeNegocioException;
 
     @Operation(summary = "Deleta uma receita por ID", description = "Busca no banco a receita a partir de um ID e a deleta")
     @ApiResponses(
@@ -79,5 +80,5 @@ public interface ReceitaControllerDoc {
             }
     )
     @DeleteMapping("/{idReceita}")
-    public ResponseEntity<Void> remove(@PathVariable("idReceita") Integer id);
+    public ResponseEntity<Void> remove(@PathVariable("idReceita") Integer id) throws RegraDeNegocioException;
 }

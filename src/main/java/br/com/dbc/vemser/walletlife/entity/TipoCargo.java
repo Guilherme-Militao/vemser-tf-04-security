@@ -1,6 +1,6 @@
 package br.com.dbc.vemser.walletlife.entity;
 
-import java.util.Arrays;
+
 
 public enum TipoCargo {
     ROLE_ADMIN(1),
