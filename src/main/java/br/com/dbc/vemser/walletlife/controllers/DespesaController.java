@@ -1,6 +1,6 @@
 package br.com.dbc.vemser.walletlife.controllers;
 
-import br.com.dbc.vemser.walletlife.doc.DespesaControllerDoc;
+
 import br.com.dbc.vemser.walletlife.dto.DespesaCreateDTO;
 import br.com.dbc.vemser.walletlife.dto.DespesaDTO;
 import br.com.dbc.vemser.walletlife.exceptions.EntidadeNaoEncontradaException;
@@ -22,7 +22,7 @@ import java.util.List;
 @RequestMapping("/despesa")
 @Slf4j
 @Data
-public class DespesaController implements DespesaControllerDoc {
+public class DespesaController{
 
     private final DespesaService despesaService;
 
@@ -41,9 +41,14 @@ public class DespesaController implements DespesaControllerDoc {
         return new ResponseEntity<>(despesaService.listarDespesaByIdUsuario(id), HttpStatus.OK);
     }
 
-    @PostMapping("/{idUsuario}")
-    public ResponseEntity<DespesaDTO> adicionarDespesa(@PathVariable("idUsuario") Integer idUsuario,@Valid @RequestBody DespesaCreateDTO despesa) throws RegraDeNegocioException {
-        return new ResponseEntity<>(despesaService.adicionarDespesa(despesa,idUsuario), HttpStatus.OK);
+    @GetMapping("/valor-total")
+    public ResponseEntity<Double> totalReceitas() throws RegraDeNegocioException {
+        return new ResponseEntity<>(despesaService.valorTotal(), HttpStatus.OK);
+    }
+
+    @PostMapping("/criar-despesa")
+    public ResponseEntity<DespesaDTO> adicionarDespesa(@Valid @RequestBody DespesaCreateDTO despesa) throws RegraDeNegocioException {
+        return new ResponseEntity<>(despesaService.adicionarDespesa(despesa), HttpStatus.OK);
     }
 
     @PutMapping("/{idDespesa}")

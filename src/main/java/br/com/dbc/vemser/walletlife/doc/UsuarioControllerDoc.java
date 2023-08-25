@@ -116,7 +116,7 @@ public interface UsuarioControllerDoc {
     )
     @PutMapping("/{idUsuario}")
     public ResponseEntity<UsuarioDTO> update(@PathVariable @Positive Integer idUsuario,
-                                                   @RequestBody @Valid UsuarioCreateDTO usuario);
+                                                   @RequestBody @Valid UsuarioCreateDTO usuario) throws Exception;
 
     @Operation(summary = "Deleta um Usuário por ID", description = "Busca no banco o usuário a partir de um ID e o deleta")
     @ApiResponses(

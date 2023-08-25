@@ -48,28 +48,24 @@ public class UsuarioService {
 
 
     public void remove(Integer idUsuario) {
-        usuarioRepository.deleteById(idUsuario);
+
+
+        usuarioRepository.deleteById(getIdLoggedUser());
     }
 
     // atualização de um objeto
-    public UsuarioDTO update(Integer id, UsuarioCreateDTO usuario) {
-        try {
-            Optional<UsuarioEntity> usuarioExisteOp = usuarioRepository.findById(id);
-            if (usuarioExisteOp.isEmpty()) {
-                throw new RegraDeNegocioException("Usuário não encontrado");
-            }
-            UsuarioEntity usuarioEntityDados = objectMapper.convertValue(usuario, UsuarioEntity.class);
-            UsuarioEntity usuarioEntityExiste = usuarioExisteOp.get();
+    public UsuarioDTO update(Integer id, UsuarioCreateDTO usuario)  throws Exception{
 
-            BeanUtils.copyProperties(usuarioEntityDados, usuarioEntityExiste, "idUsuario", "receitaEntities", "despesaEntities", "investimentoEntities" );
+        UsuarioEntity usuarioEntity = usuarioRepository.findById(getIdLoggedUser())
+                .orElseThrow(()-> new RegraDeNegocioException("Usuario não encontrado"));
 
-            UsuarioEntity usuarioEntityAtualizado = usuarioRepository.save(usuarioEntityExiste);
-            UsuarioDTO usuarioDTO = objectMapper.convertValue(usuarioEntityAtualizado, UsuarioDTO.class);
+        usuarioEntity.setEmail(usuario.getEmail());
+        usuarioEntity.setLogin(usuario.getEmail());
+        usuarioEntity.setNome(usuario.getNome());
+        usuarioEntity.setDataNascimento(usuario.getDataNascimento());
 
-            return usuarioDTO;
-        } catch (RegraDeNegocioException e) {
-            throw new RuntimeException(e);
-        }
+        return convertToDTO(usuarioRepository.save(usuarioEntity));
+
     }
 
 
@@ -116,12 +112,7 @@ public class UsuarioService {
     }
 
     public List<UsuarioDadosDTO> findUsuarioDados(Integer idUsuario, Integer pagina, Integer quantidadeRegistros) throws RegraDeNegocioException {
-//        if (idUsuario != null){
-//            Optional<UsuarioEntity> usuarioOP = usuarioRepository.findById(idUsuario);
-//            if (usuarioOP.isEmpty()){
-//                throw new RegraDeNegocioException("Usuário não encontrado");
-//            }
-//        }
+
         Pageable pageable = PageRequest.of(pagina, quantidadeRegistros);
         Page<UsuarioEntity> dados = usuarioRepository.findAllComOptional(getIdLoggedUser(), pageable);
         List<UsuarioEntity> usuarioEntityDadosDTOS = dados.getContent();
@@ -160,7 +151,7 @@ public class UsuarioService {
     }
 
     public UsuarioDTO updateSenha(Integer id, @Valid UsuarioSenhaDTO usuarioSenhaDTO) {
-        UsuarioEntity usuarioExisteOp = usuarioRepository.getById(id);
+        UsuarioEntity usuarioExisteOp = usuarioRepository.getById(getIdLoggedUser());
 
         UsuarioDTO usuarioDTOSenha = objectMapper.convertValue(usuarioSenhaDTO, UsuarioDTO.class);
 

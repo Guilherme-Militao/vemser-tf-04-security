@@ -10,7 +10,6 @@ import br.com.dbc.vemser.walletlife.entity.UsuarioEntity;
 import br.com.dbc.vemser.walletlife.repository.DespesaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,8 +24,8 @@ public class DespesaService {
     private final ObjectMapper objectMapper;
     private final UsuarioService usuarioService;
 
-    public DespesaDTO adicionarDespesa(DespesaCreateDTO despesa,Integer idUsuario) throws RegraDeNegocioException {
-        UsuarioDTO usuarioById = usuarioService.findByUsuarioEntity(idUsuario);
+    public DespesaDTO adicionarDespesa(DespesaCreateDTO despesa) throws RegraDeNegocioException {
+        UsuarioDTO usuarioById = usuarioService.findByUsuarioEntity(usuarioService.getIdLoggedUser());
         if (usuarioById != null) {
             UsuarioEntity usuarioEntityConvertido = objectMapper.convertValue(usuarioById, UsuarioEntity.class);
             DespesaEntity entity = objectMapper.convertValue(despesa, DespesaEntity.class);
@@ -39,32 +38,48 @@ public class DespesaService {
     }
 
     // remoção
-    public void removerDespesa(Integer idDespesa) throws RegraDeNegocioException {
-        despesaRepository.deleteById(idDespesa);
+    public void removerDespesa(Integer id) throws RegraDeNegocioException {
+        Optional<DespesaEntity> despesaBuscada = despesaRepository.findById(id);
+        if (despesaBuscada.isEmpty()) {
+            throw new RegraDeNegocioException("Investimento não encontrado!");
+        }
+
+        Integer userId = usuarioService.getIdLoggedUser();
+        DespesaEntity despesaEntity = despesaBuscada.get();
+        if (!despesaEntity.getUsuarioEntity().getIdUsuario().equals(userId)) {
+            throw new RegraDeNegocioException("ID de investimento inválido.");
+        }
+        despesaRepository.deleteById(id);
     }
 
     // atualização de um objeto
     public DespesaDTO editarDespesa(Integer id, DespesaCreateDTO despesa) throws RegraDeNegocioException {
-        try {
-            Optional<DespesaEntity> despesaExiteOp = despesaRepository.findById(id);
-            if (despesaExiteOp.isEmpty()){
-                throw new RegraDeNegocioException("Despesa não encontrada");
-            }
-            DespesaEntity despesaEntityDados = objectMapper.convertValue(despesa, DespesaEntity.class);
-            DespesaEntity despesaEntityExiste = objectMapper.convertValue(despesaExiteOp, DespesaEntity.class);
-
-//            BeanUtils.copyProperties(despesaEntityDados, despesaEntityExiste, "idDespesa");
-
-            despesaEntityDados.setIdDespesa(despesaEntityExiste.getIdDespesa());
-            despesaEntityDados.setUsuarioEntity(despesaEntityExiste.getUsuarioEntity());
-
-            DespesaEntity despesaEntityAtualizada = despesaRepository.save(despesaEntityDados);
-            DespesaDTO despesaDTO = objectMapper.convertValue(despesaEntityAtualizada,DespesaDTO.class);
-
-            return despesaDTO;
-        } catch (RegraDeNegocioException e){
-            throw new RuntimeException(e);
+        Optional<DespesaEntity> despesaBuscada = despesaRepository.findById(id);
+        if (despesaBuscada.isEmpty()) {
+            throw new RegraDeNegocioException("Investimento não encontrado!");
         }
+
+        Integer userId = usuarioService.getIdLoggedUser();
+        DespesaEntity despesaEntity = despesaBuscada.get();
+        if (!despesaEntity.getUsuarioEntity().getIdUsuario().equals(userId)) {
+            throw new RegraDeNegocioException("ID de investimento inválido.");
+        }
+
+        despesaEntity.setTipo(despesa.getTipo());
+        despesaEntity.setDescricao(despesa.getDescricao());
+        despesaEntity.setValor(despesa.getValor());
+        despesaEntity.setDescricao(despesa.getDescricao());
+        despesaEntity.setDataPagamento(despesa.getDataPagamento());
+
+
+
+        return convertToDTO(despesaRepository.save(despesaEntity));
+    }
+
+    public Double valorTotal() throws RegraDeNegocioException {
+        return listarDespesaByIdUsuario(usuarioService.getIdLoggedUser()).stream()
+                .mapToDouble(DespesaDTO::getValor)
+                .sum();
     }
 
     // leitura
@@ -89,7 +104,7 @@ public class DespesaService {
 
     public DespesaDTO findById(Integer id) throws RegraDeNegocioException, EntidadeNaoEncontradaException {
         Optional<DespesaEntity> despesaOP = despesaRepository.findById(id);
-        if (despesaOP.isEmpty()){
+        if (despesaOP.isEmpty()) {
             throw new RegraDeNegocioException("Despesa não encontrada");
         }
         return convertToDTO(returnDespesaEntityById(id));
@@ -107,6 +122,6 @@ public class DespesaService {
 
     public DespesaEntity returnDespesaEntityById(Integer id) throws EntidadeNaoEncontradaException {
         return despesaRepository.findById(id)
-                .orElseThrow(() -> new EntidadeNaoEncontradaException("Receita não encontrada"));
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Despesa não encontrada"));
     }
 }

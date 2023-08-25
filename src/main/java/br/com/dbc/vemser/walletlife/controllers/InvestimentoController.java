@@ -42,17 +42,22 @@ public class InvestimentoController implements InvestimentoControllerDoc {
         return ResponseEntity.ok(investimentos);
     }
 
-    @PostMapping("/{idUsuario}")
-    public ResponseEntity<InvestimentoDTO> create(@RequestBody @Valid InvestimentoCreateDTO investimento, @PathVariable("idUsuario") @Positive Integer id) throws RegraDeNegocioException {
-        InvestimentoDTO novoInvestimento = investimentoService.create(investimento, id);
+    @GetMapping("/valor-total")
+    public ResponseEntity<Double> totalReceitas() throws RegraDeNegocioException {
+        return new ResponseEntity<>(investimentoService.valorTotal(), HttpStatus.OK);
+    }
+
+    @PostMapping("/criar-investimento")
+    public ResponseEntity<InvestimentoDTO> create(@RequestBody @Valid InvestimentoCreateDTO investimento) {
+        InvestimentoDTO novoInvestimento = investimentoService.create(investimento);
         return ResponseEntity.status(HttpStatus.OK).body(novoInvestimento);
     }
 
     @PutMapping("/{idInvestimento}")
     public ResponseEntity<InvestimentoDTO> update(@PathVariable("idInvestimento") @Valid Integer id,
-                                                  @RequestBody InvestimentoCreateDTO investimentoAtualizar) throws RegraDeNegocioException {
-        InvestimentoDTO investimentoAtualizado = investimentoService.update(id, investimentoAtualizar);
-        return ResponseEntity.ok(investimentoAtualizado);
+                                                  @RequestBody InvestimentoCreateDTO investimento) throws RegraDeNegocioException {
+        InvestimentoDTO investimentoAtualizado = investimentoService.update(id, investimento);
+        return ResponseEntity.status(HttpStatus.OK).body(investimentoAtualizado);
     }
 
     @DeleteMapping("/{idInvestimento}")
