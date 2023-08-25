@@ -42,6 +42,11 @@ public class InvestimentoController implements InvestimentoControllerDoc {
         return ResponseEntity.ok(investimentos);
     }
 
+    @GetMapping("/valor-total")
+    public ResponseEntity<Double> totalReceitas() throws RegraDeNegocioException {
+        return new ResponseEntity<>(investimentoService.valorTotal(), HttpStatus.OK);
+    }
+
     @PostMapping("/criar-investimento")
     public ResponseEntity<InvestimentoDTO> create(@RequestBody @Valid InvestimentoCreateDTO investimento) {
         InvestimentoDTO novoInvestimento = investimentoService.create(investimento);
