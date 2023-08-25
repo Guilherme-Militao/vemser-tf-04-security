@@ -77,20 +77,20 @@ public class InvestimentoService {
     }
 
     public InvestimentoDTO findById(Integer idInvestimento) throws RegraDeNegocioException {
-        //valida se a receita exite no banco de dados
-        Optional<InvestimentoEntity> receitaBuscada = investimentoRepository.findById(idInvestimento);
-        if (receitaBuscada.isEmpty()) {
-            throw new RegraDeNegocioException("Receita não encontrada!");
+        //valida se o investimento exite no banco de dados
+        Optional<InvestimentoEntity> investimentoBuscado = investimentoRepository.findById(idInvestimento);
+        if (investimentoBuscado.isEmpty()) {
+            throw new RegraDeNegocioException("Investimento não encontrado!");
         }
 
-        //valida se a receita a ser atualizada é do usuário logado
+        //valida se o investimento a ser atualizado é do usuário logado
         Integer userId = usuarioService.getIdLoggedUser();
-        InvestimentoEntity receitaEntity = receitaBuscada.get();
-        if (!receitaEntity.getUsuarioEntity().getIdUsuario().equals(userId)) {
-            throw new RegraDeNegocioException("ID de receita inválido.");
+        InvestimentoEntity investimentoEntity = investimentoBuscado.get();
+        if (!investimentoEntity.getUsuarioEntity().getIdUsuario().equals(userId)) {
+            throw new RegraDeNegocioException("ID de investimento inválido.");
         }
 
-        return convertToDTO(receitaEntity);
+        return convertToDTO(investimentoEntity);
     }
 
     public List<InvestimentoDTO> findAll() {
