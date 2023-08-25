@@ -125,4 +125,9 @@ public class InvestimentoService {
                 .mapToDouble(InvestimentoDTO::getValor)
                 .sum();
     }
+
+    public Long totalRegistros() throws RegraDeNegocioException {
+        return findByUsuario(usuarioService.getIdLoggedUser()).stream()
+                .count();
+    }
 }
