@@ -2,6 +2,7 @@ package br.com.dbc.vemser.walletlife.service;
 
 import br.com.dbc.vemser.walletlife.dto.InvestimentoCreateDTO;
 import br.com.dbc.vemser.walletlife.dto.InvestimentoDTO;
+import br.com.dbc.vemser.walletlife.dto.ReceitaDTO;
 import br.com.dbc.vemser.walletlife.dto.UsuarioDTO;
 import br.com.dbc.vemser.walletlife.entity.InvestimentoEntity;
 import br.com.dbc.vemser.walletlife.exceptions.RegraDeNegocioException;
@@ -35,7 +36,18 @@ public class InvestimentoService {
         return convertToDTO(investimentoEntityConvertido);
     }
 
-    public void remove(Integer id) {
+    public void remove(Integer id) throws RegraDeNegocioException {
+        Optional<InvestimentoEntity> investimentoBuscado = investimentoRepository.findById(id);
+        if (investimentoBuscado.isEmpty()) {
+            throw new RegraDeNegocioException("Investimento não encontrado!");
+        }
+
+        Integer userId = usuarioService.getIdLoggedUser();
+        InvestimentoEntity investimentoEntity = investimentoBuscado.get();
+        if (!investimentoEntity.getUsuarioEntity().getIdUsuario().equals(userId)) {
+            throw new RegraDeNegocioException("ID de investimento inválido.");
+        }
+
         investimentoRepository.deleteById(id);
     }
 
@@ -106,5 +118,11 @@ public class InvestimentoService {
         return investimentoEntities.stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
+    }
+
+    public Double valorTotal() throws RegraDeNegocioException {
+        return findByUsuario(usuarioService.getIdLoggedUser()).stream()
+                .mapToDouble(InvestimentoDTO::getValor)
+                .sum();
     }
 }
