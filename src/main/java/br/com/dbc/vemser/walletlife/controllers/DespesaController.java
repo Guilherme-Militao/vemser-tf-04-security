@@ -41,7 +41,7 @@ public class DespesaController{
         return new ResponseEntity<>(despesaService.listarDespesaByIdUsuario(id), HttpStatus.OK);
     }
 
-    @GetMapping("/receitas-total")
+    @GetMapping("/valor-total")
     public ResponseEntity<Double> totalReceitas() throws RegraDeNegocioException {
         return new ResponseEntity<>(despesaService.valorTotal(), HttpStatus.OK);
     }
