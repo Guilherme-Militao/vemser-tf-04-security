@@ -82,6 +82,11 @@ public class DespesaService {
                 .sum();
     }
 
+    public Long totalRegistros() throws RegraDeNegocioException {
+        return listarDespesaByIdUsuario(usuarioService.getIdLoggedUser()).stream()
+                .count();
+    }
+
     // leitura
     public List<DespesaDTO> listarDespesaByIdUsuario(Integer idUsuario) throws RegraDeNegocioException {
         UsuarioDTO usuarioById = usuarioService.findByUsuarioEntity(idUsuario);
