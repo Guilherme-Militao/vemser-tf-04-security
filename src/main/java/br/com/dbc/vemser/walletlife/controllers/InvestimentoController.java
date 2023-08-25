@@ -50,9 +50,9 @@ public class InvestimentoController implements InvestimentoControllerDoc {
 
     @PutMapping("/{idInvestimento}")
     public ResponseEntity<InvestimentoDTO> update(@PathVariable("idInvestimento") @Valid Integer id,
-                                                  @RequestBody InvestimentoCreateDTO investimentoAtualizar) throws RegraDeNegocioException {
-        InvestimentoDTO investimentoAtualizado = investimentoService.update(id, investimentoAtualizar);
-        return ResponseEntity.ok(investimentoAtualizado);
+                                                  @RequestBody InvestimentoCreateDTO investimento) throws RegraDeNegocioException {
+        InvestimentoDTO investimentoAtualizado = investimentoService.update(id, investimento);
+        return ResponseEntity.status(HttpStatus.OK).body(investimentoAtualizado);
     }
 
     @DeleteMapping("/{idInvestimento}")

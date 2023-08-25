@@ -10,7 +10,6 @@ import br.com.dbc.vemser.walletlife.entity.UsuarioEntity;
 import br.com.dbc.vemser.walletlife.repository.DespesaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -39,7 +38,7 @@ public class DespesaService {
     }
 
     // remoção
-    public void removerDespesa(Integer idDespesa) throws RegraDeNegocioException {
+    public void removerDespesa(Integer idDespesa) {
         despesaRepository.deleteById(idDespesa);
     }
 
