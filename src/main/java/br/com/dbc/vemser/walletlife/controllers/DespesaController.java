@@ -41,6 +41,11 @@ public class DespesaController{
         return new ResponseEntity<>(despesaService.listarDespesaByIdUsuario(id), HttpStatus.OK);
     }
 
+    @GetMapping("/receitas-total")
+    public ResponseEntity<Double> totalReceitas() throws RegraDeNegocioException {
+        return new ResponseEntity<>(despesaService.valorTotal(), HttpStatus.OK);
+    }
+
     @PostMapping("/criar-despesa")
     public ResponseEntity<DespesaDTO> adicionarDespesa(@Valid @RequestBody DespesaCreateDTO despesa) throws RegraDeNegocioException {
         return new ResponseEntity<>(despesaService.adicionarDespesa(despesa), HttpStatus.OK);
