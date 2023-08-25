@@ -112,12 +112,7 @@ public class UsuarioService {
     }
 
     public List<UsuarioDadosDTO> findUsuarioDados(Integer idUsuario, Integer pagina, Integer quantidadeRegistros) throws RegraDeNegocioException {
-//        if (idUsuario != null){
-//            Optional<UsuarioEntity> usuarioOP = usuarioRepository.findById(idUsuario);
-//            if (usuarioOP.isEmpty()){
-//                throw new RegraDeNegocioException("Usuário não encontrado");
-//            }
-//        }
+
         Pageable pageable = PageRequest.of(pagina, quantidadeRegistros);
         Page<UsuarioEntity> dados = usuarioRepository.findAllComOptional(getIdLoggedUser(), pageable);
         List<UsuarioEntity> usuarioEntityDadosDTOS = dados.getContent();

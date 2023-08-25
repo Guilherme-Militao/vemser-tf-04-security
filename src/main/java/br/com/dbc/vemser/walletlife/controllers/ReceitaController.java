@@ -37,6 +37,11 @@ public class ReceitaController implements ReceitaControllerDoc {
         return new ResponseEntity<>(receitaService.findByUsuario(id), HttpStatus.OK);
     }
 
+    @GetMapping("/receitas-total")
+    public ResponseEntity<Double> totalReceitas(){
+        return new ResponseEntity<>(receitaService.valorTotal(), HttpStatus.OK);
+    }
+
     @PostMapping("/criar-receita")
     public ResponseEntity<ReceitaDTO> create(@Valid @RequestBody ReceitaCreateDTO receita){
         return new ResponseEntity<>(receitaService.create(receita), HttpStatus.OK);
