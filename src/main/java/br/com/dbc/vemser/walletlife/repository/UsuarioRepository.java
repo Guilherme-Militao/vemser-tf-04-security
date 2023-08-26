@@ -26,7 +26,7 @@ public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Integer>
 
     @Query("""
         SELECT NEW br.com.dbc.vemser.walletlife.dto.UsuarioComInvestimentoDTO
-        (u.idUsuario, u.nome, i.idInvestimento, i.valor, i.corretora)
+        (u.idUsuario, u.nome, i.idInvestimento, i.valor,i.descricao, i.corretora)
         FROM Usuario u
         JOIN u.investimentoEntities i
         WHERE (:corretora is null OR trim(upper(i.corretora)) = trim(upper(:corretora))) AND u.idUsuario=:idPessoa
