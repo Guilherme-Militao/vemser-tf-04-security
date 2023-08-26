@@ -20,6 +20,9 @@ public class UsuarioComInvestimentoDTO {
     @Schema(description = "Valor do investimento do usuario", required = true, example = "1500")
     private Double valor;
 
+    @Schema(description = "Descricao do investimento", required = true, example = "Descricao")
+    private String descricao;
+
     @Schema(description = "Corretora do investimento", required = true, example = "Corretora ABC")
     private String corretora;
 
@@ -27,11 +30,13 @@ public class UsuarioComInvestimentoDTO {
                                      String nome,
                                      Integer idInvestimento,
                                      Double valor,
+                                     String descricao,
                                      String corretora) {
         this.idUsuario = idUsuario;
         this.nome = nome;
         this.idInvestimento = idInvestimento;
         this.valor = valor;
+        this.descricao = descricao;
         this.corretora = corretora;
     }
 }
