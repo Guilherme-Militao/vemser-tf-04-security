@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
@@ -20,6 +21,7 @@ public class DespesaCreateDTO {
     protected TipoDespesaEReceita tipo;
 
     @NotNull
+    @PositiveOrZero(message = "O valor não pode ser negativo")
     @Schema(description ="Valor da receita" ,required = true, example = "150.00")
     private Double valor;
 

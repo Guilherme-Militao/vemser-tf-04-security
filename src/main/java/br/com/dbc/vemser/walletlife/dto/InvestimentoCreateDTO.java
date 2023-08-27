@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
@@ -26,6 +27,7 @@ public class InvestimentoCreateDTO {
     protected TipoDespesaEReceita tipo;
 
     @NotNull
+    @PositiveOrZero(message = "O valor não pode ser negativo")
     @Schema(description = "Valor do investimento", example = "1500.00", required = true)
     private Double valor;
 
