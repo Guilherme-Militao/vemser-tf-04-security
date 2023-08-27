@@ -17,12 +17,14 @@ import java.util.Set;
 @Repository
 public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Integer> {
     @Query("""
-        SELECT NEW br.com.dbc.vemser.walletlife.dto.UsuarioComDespesaDTO(u.idUsuario, u.nome, d.idDespesa, d.valor, d.descricao)
+        SELECT new br.com.dbc.vemser.walletlife.dto.UsuarioComDespesaDTO
+        (u.idUsuario,u.nome,r.idDespesa,r.valor,r.descricao)
         FROM Usuario u
-        JOIN u.despesaEntities d
-        where u.idUsuario = :idPessoa
+        JOIN u.despesaEntities r
+         WHERE (:valor is null or r.valor > :valor)
+        AND u.idUsuario=:idPessoa
     """)
-    Set<UsuarioComDespesaDTO> findAllUsuariosDespesa(Integer idPessoa);
+    Page<UsuarioComDespesaDTO> findallUsuarioDespesa(@Param("valor") Double valor,Pageable pageable, Integer idPessoa);
 
     @Query("""
         SELECT NEW br.com.dbc.vemser.walletlife.dto.UsuarioComInvestimentoDTO

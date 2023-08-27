@@ -93,8 +93,11 @@ public class UsuarioService {
         return usuarios;
     }
 
-    public Set<UsuarioComDespesaDTO> findAllUsuariosDespesa(){
-        return usuarioRepository.findAllUsuariosDespesa(getIdLoggedUser());
+    public List<UsuarioComDespesaDTO> findAllUsuarioDespesa(Double valor, Integer pagina, Integer quantidadeRegistros){
+        Pageable pageable = PageRequest.of(pagina, quantidadeRegistros);
+        Page<UsuarioComDespesaDTO> receitas = usuarioRepository.findallUsuarioDespesa(valor, pageable, getIdLoggedUser());
+        List<UsuarioComDespesaDTO> usuarioComDespesaDTOS = receitas.getContent();
+        return usuarioComDespesaDTOS;
     }
 
     public List<UsuarioComReceitaDTO> findAllUsuarioReceita(Double valor, Integer pagina, Integer quantidadeRegistros){
