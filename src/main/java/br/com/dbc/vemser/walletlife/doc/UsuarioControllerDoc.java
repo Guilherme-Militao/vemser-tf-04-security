@@ -47,7 +47,8 @@ public interface UsuarioControllerDoc {
             }
     )
     @GetMapping("/usuario-despesa")
-    public ResponseEntity<Set<UsuarioComDespesaDTO>> findAllUsuariosDespesa();
+    public ResponseEntity<List<UsuarioComDespesaDTO>> findAllUsuariosDespesa(Integer pagina, Integer quantidadeRegistros,
+                                                                             @RequestParam(value = "valor", required = false) Double valor);
 
     @Operation(summary = "Listar Usuários e suas receitas, todas, filtradas por um valor, e paginadas", description = "Busca no banco o usuário suas receitas")
     @ApiResponses(
