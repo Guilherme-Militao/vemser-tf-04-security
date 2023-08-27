@@ -43,8 +43,9 @@ public class UsuarioController implements UsuarioControllerDoc {
     }
 
     @GetMapping("/usuario-despesa")
-    public ResponseEntity<Set<UsuarioComDespesaDTO>> findAllUsuariosDespesa() {
-        return new ResponseEntity<>(usuarioService.findAllUsuariosDespesa(), HttpStatus.OK);
+    public ResponseEntity<List<UsuarioComDespesaDTO>> findAllUsuariosDespesa(Integer pagina, Integer quantidadeRegistros,
+                                                                             @RequestParam(value = "valor", required = false) Double valor) {
+        return new ResponseEntity<>(usuarioService.findAllUsuarioDespesa(valor, pagina, quantidadeRegistros), HttpStatus.OK);
     }
 
     @GetMapping("/usuario-receita")
