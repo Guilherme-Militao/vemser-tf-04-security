@@ -28,12 +28,18 @@ public class UsuarioComReceitaDTO {
     @Schema(description = "Banco associao a rceita", required = true, example = "Banco XYZ")
     private String banco;
 
-    public UsuarioComReceitaDTO(Integer idUsuario, String nome, Integer idReceita, Double valor, String descricao, String banco) {
+    @Schema(description = "Empresa da despesa", required = true, example = "Banco XYZ")
+    private String empresa;
+
+
+
+    public UsuarioComReceitaDTO(Integer idUsuario, String nome, Integer idReceita, Double valor, String descricao, String banco, String empresa) {
         this.idUsuario = idUsuario;
         this.nome = nome;
         this.idReceita = idReceita;
         this.valor = valor;
         this.descricao = descricao;
         this.banco = banco;
+        this.empresa = empresa;
     }
 }
