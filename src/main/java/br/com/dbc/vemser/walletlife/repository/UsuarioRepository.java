@@ -37,7 +37,7 @@ public interface UsuarioRepository extends JpaRepository<UsuarioEntity, Integer>
 
     @Query("""
         SELECT new br.com.dbc.vemser.walletlife.dto.UsuarioComReceitaDTO
-        (u.idUsuario, u.nome, r.id, r.valor, r.descricao, r.banco)
+        (u.idUsuario, u.nome, r.id, r.valor, r.descricao, r.banco, r.empresa)
         FROM Usuario u
         JOIN u.receitaEntities r
         WHERE (:valor is null or r.valor > :valor)
