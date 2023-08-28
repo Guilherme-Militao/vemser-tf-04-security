@@ -62,6 +62,7 @@ public class UsuarioService {
         usuarioEntity.setEmail(usuario.getEmail());
         usuarioEntity.setLogin(usuario.getEmail());
         usuarioEntity.setNome(usuario.getNome());
+        usuarioEntity.setCpf(usuario.getCpf());
         usuarioEntity.setDataNascimento(usuario.getDataNascimento());
 
         return convertToDTO(usuarioRepository.save(usuarioEntity));
