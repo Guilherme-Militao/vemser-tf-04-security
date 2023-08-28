@@ -154,7 +154,7 @@ public class UsuarioService {
         return usuarioLoggedDTO;
     }
 
-    public UsuarioDTO updateSenha(Integer id, @Valid UsuarioSenhaDTO usuarioSenhaDTO) {
+    public UsuarioDTO updateSenha(@Valid UsuarioSenhaDTO usuarioSenhaDTO) {
         UsuarioEntity usuarioExisteOp = usuarioRepository.getById(getIdLoggedUser());
 
         UsuarioDTO usuarioDTOSenha = objectMapper.convertValue(usuarioSenhaDTO, UsuarioDTO.class);
