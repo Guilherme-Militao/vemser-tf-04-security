@@ -23,6 +23,8 @@ public class UsuarioComDespesaDTO {
     @Schema(description = "Descrição de uma despesa do usuario", required = true, example = "Conta de internet")
     private  String descricao;
 
+
+
     public UsuarioComDespesaDTO(Integer idUsuario, String nome, Integer idDespesa, Double valor, String descricao) {
         this.idUsuario = idUsuario;
         this.nome = nome;
